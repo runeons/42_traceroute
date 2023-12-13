@@ -38,7 +38,7 @@ void            init_options_params(t_data *dt);
 void            init_data(t_data *dt, t_parsed_cmd *parsed_cmd);
 void            init_recv_msgh(struct msghdr *msg, char *r_packet, int socket);
 //  display.c
-void            display_ping_init(t_data *dt);
+void            display_traceroute_init(t_data *dt);
 void            display_ping_OK(t_data *dt);
 void            display_ping_error(t_data *dt, char *msg);
 void            display_ping_end_stats(t_data *dt);

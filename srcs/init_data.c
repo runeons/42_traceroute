@@ -27,6 +27,7 @@ void init_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     dt->address.sin_family = AF_INET;
     dt->address.sin_port = 0;
     dt->address.sin_addr.s_addr = INADDR_ANY;
+    dt->max_hops = 0;
     dt->init_tv.tv_sec = 0;
     dt->init_tv.tv_usec = 0;
     dt->one_seq.bytes = 0;

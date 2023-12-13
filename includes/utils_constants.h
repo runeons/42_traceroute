@@ -2,7 +2,7 @@
 #ifndef UTILS_CONSTANTS_H
 # define UTILS_CONSTANTS_H
 
-# define DEBUG 0
+# define DEBUG 1
 # define VERBOSE 0
 
 # define MAX_INT                2147483647
@@ -10,6 +10,11 @@
 
 # define HEX_BASE_U             "0123456789ABCDEF"
 # define HEX_BASE_L             "0123456789abcdef"
+
+# define MAX_HOPS              30
+
+
+
 
 # define MAX_IP_LEN             16
 # define MAX_HOSTNAME_LEN       128

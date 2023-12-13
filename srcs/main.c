@@ -40,13 +40,13 @@ void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
         add_destination(dt, parsed_cmd->not_options->content);
     resolve_address(dt);
     resolve_hostname(dt);
-    open_socket(dt);
-    set_socket_options(dt->socket, dt);
+    // open_socket(dt);
+    // set_socket_options(dt->socket, dt);
 }
 
-void    ping_init(t_data *dt)
+void    traceroute_init(t_data *dt)
 {
-    display_ping_init(dt);
+    display_traceroute_init(dt);
     if (gettimeofday(&dt->init_tv, &dt->tz) != 0)
         exit_error_close(dt->socket, "ping: cannot retrieve time\n");
 }
@@ -60,15 +60,15 @@ void    ping_end(t_data *dt)
 
 int main(int ac, char **av)
 {
-    // t_data          dt;
+    t_data          dt;
     t_parsed_cmd    parsed_cmd;
 
     parse_input(&parsed_cmd, ac, av);
     if (is_activated_option(parsed_cmd.act_options, 'h'))
         option_h();
-    // initialise_data(&dt, &parsed_cmd);
-    // signal(SIGINT, handle_sigint);
-    // ping_init(&dt);
+    initialise_data(&dt, &parsed_cmd);
+    signal(SIGINT, handle_sigint);
+    traceroute_init(&dt);
     // while (g_traceroute)
     //     ping_sequence(&dt);
     // ping_end(&dt);

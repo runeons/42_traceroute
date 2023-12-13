@@ -48,12 +48,9 @@ static void    display_icmp_header(t_data *dt, unsigned char *bytes)
     printf("ICMP: type %d, code %d, size %d, id 0x%04x, seq 0x%04d\n", icmp_in_payload->type, icmp_in_payload->code, dt->one_seq.bytes, htons(icmp_in_payload->un.echo.id), icmp_in_payload->un.echo.sequence);
 }
 
-void    display_ping_init(t_data *dt)
+void    display_traceroute_init(t_data *dt)
 {
-    printf("PING %s (%s): %lu data bytes", dt->input_dest, dt->resolved_address, sizeof(dt->crafted_icmp) - sizeof(dt->crafted_icmp.h));
-    if (dt->options_params.v)
-        printf(", id 0x%x = %d", htons(dt->id), htons(dt->id));
-    printf("\n");
+    printf("traceroute to %s (%s), %d hops max, 60 byte packets\n", dt->input_dest, dt->resolved_address, dt->max_hops); // TR to replace 60
 }
 
 void    display_ping_OK(t_data *dt)

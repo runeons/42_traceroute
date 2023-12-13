@@ -76,6 +76,7 @@ typedef struct  s_data
     char                *resolved_hostname;
     int                 socket;
     struct sockaddr_in  address;
+    int                 max_hops;
     t_icmp              crafted_icmp;
     unsigned short int  id;
     struct timeval      tz;
