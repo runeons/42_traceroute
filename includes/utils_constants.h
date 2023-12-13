@@ -12,6 +12,7 @@
 # define HEX_BASE_L             "0123456789abcdef"
 
 # define MAX_HOPS              30
+# define NB_PROBES             3
 
 
 

@@ -27,7 +27,7 @@ void    parse_input(t_parsed_cmd *parsed_cmd, int ac, char **av)
     if (ac < 2)
         option_h();
     *parsed_cmd = parse_options(ac, av);
-    // debug_activated_options(parsed_cmd->act_options);
+    debug_activated_options(parsed_cmd->act_options);
 }
 
 void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)

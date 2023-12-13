@@ -74,9 +74,13 @@ typedef struct  s_data
     t_lst               *act_options;
     char                *resolved_address;
     char                *resolved_hostname;
+
     int                 socket;
     struct sockaddr_in  address;
+
     int                 max_hops;
+    int                 nb_probes;
+
     t_icmp              crafted_icmp;
     unsigned short int  id;
     struct timeval      tz;

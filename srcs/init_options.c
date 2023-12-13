@@ -138,10 +138,34 @@
 //     }
 // }
 
+void   option_q(t_data *dt)
+{
+    int  nb_probes  = 0;
+    char *param     = NULL;
+
+    if (is_activated_option(dt->act_options, 'q'))
+    {
+        param = ft_strdup(get_option(dt->act_options, 'q')->param);
+        if (param == NULL)
+            exit_error("ping: malloc failure.\n");
+        if (ft_isstrnum(param) == 0)
+            exit_error("ping: invalid value: (`%s' near `%s')\n", param, param);
+        nb_probes = ft_atoi(param);
+        if (nb_probes <= 0)
+            exit_error("ping: option value too small: %d\n", nb_probes);
+        else if (nb_probes > 255)
+            exit_error("ping: option value too big: %d\n", nb_probes);
+        else
+            dt->nb_probes = ft_atoi(param);
+    }
+    else
+        dt->nb_probes = NB_PROBES;
+}
+
 void   option_m(t_data *dt)
 {
-    int  ttl    = 0;
-    char *param = NULL;
+    int  max_hops   = 0;
+    char *param     = NULL;
 
     if (is_activated_option(dt->act_options, 'm'))
     {
@@ -150,11 +174,11 @@ void   option_m(t_data *dt)
             exit_error("ping: malloc failure.\n");
         if (ft_isstrnum(param) == 0)
             exit_error("ping: invalid value: (`%s' near `%s')\n", param, param);
-        ttl = ft_atoi(param);
-        if (ttl <= 0)
-            exit_error("ping: option value too small: %d\n", ttl);
-        else if (ttl > 255)
-            exit_error("ping: option value too big: %d\n", ttl);
+        max_hops = ft_atoi(param);
+        if (max_hops <= 0)
+            exit_error("ping: option value too small: %d\n", max_hops);
+        else if (max_hops > 255)
+            exit_error("ping: option value too big: %d\n", max_hops);
         else
             dt->max_hops = ft_atoi(param);
     }
@@ -165,7 +189,7 @@ void   option_m(t_data *dt)
 void    init_options_params(t_data *dt)
 {
     (void)dt;
-    // option_q(dt);
+    option_q(dt);
     // option_w(dt);
     option_m(dt);
     // option_p(dt);
