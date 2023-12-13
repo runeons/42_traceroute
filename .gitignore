@@ -1,0 +1,5 @@
+ft_traceroute
+objs/
+libft/libft.a
+libft/objs/
+.vscode/
