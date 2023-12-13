@@ -1,3 +1,4 @@
+
 #include "traceroute_functions.h"
 
 static int    is_same_id(t_data *dt) // is reply id the same as request id
@@ -89,24 +90,20 @@ static void    receive_packet(t_data *dt)
     }
 }
 
-static void    send_udp_and_receive_packet(t_data *dt)    
+static void    send_icmp_and_receive_packet(t_data *dt)    
 {
     int                     r = 0;	
     
-    dt->address.sin_port = dt->crafted_udp.h.uh_dport;
     if (gettimeofday(&dt->one_seq.send_tv, &dt->tz) != 0)
         exit_error_close(dt->socket, "ping: cannot retrieve time\n");
-    debug_sockaddr_in(&dt->address);
-    r = sendto(dt->socket, &dt->crafted_udp, sizeof(dt->crafted_udp), 0, (struct sockaddr*)&dt->address, sizeof(dt->address));
+    r = sendto(dt->socket, &dt->crafted_icmp, sizeof(dt->crafted_icmp), 0, (struct sockaddr*)&dt->address, sizeof(dt->address));
     if (r <= 0)
-        warning_error(C_G_RED"packet sending failure : %s"C_RES"\n", strerror(r));
-    else if (r != sizeof(dt->crafted_udp))
+        warning_error(C_G_RED"packet sending failure"C_RES"\n");
+    else if (r != sizeof(dt->crafted_icmp))
         warning_error(C_G_RED"packet not completely sent"C_RES"\n");
     else
     {
         dt->end_stats.sent_nb++;
-        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", "SENT");
-        exit(1);
         receive_packet(dt);
     }
 }
@@ -115,6 +112,8 @@ void trace_hops(t_data *dt)
 {
     craft_udp(dt);
     debug_crafted_udp(&dt->crafted_udp);
-    send_udp_and_receive_packet(dt);
+    // craft_icmp(dt);
+    // debug_crafted_icmp(&dt->crafted_icmp);
+    // send_icmp_and_receive_packet(dt);
     // usleep(dt->options_params.seq_interval_us);
 }

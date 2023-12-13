@@ -14,6 +14,9 @@
 # define MAX_HOPS              30
 # define NB_PROBES             3
 
+# define UDP_H_LEN             8
+# define UDP_D_LEN             32
+# define UDP_PAYLOAD           "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\^_]"
 
 
 

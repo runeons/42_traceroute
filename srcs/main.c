@@ -40,6 +40,7 @@ void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
         add_destination(dt, parsed_cmd->not_options->content);
     resolve_address(dt);
     resolve_hostname(dt);
+    open_udp_socket(dt);
     // open_socket(dt);
     // set_socket_options(dt->socket, dt);
 }
@@ -51,9 +52,9 @@ void    traceroute_init(t_data *dt)
         exit_error_close(dt->socket, "ping: cannot retrieve time\n");
 }
 
-void    ping_end(t_data *dt)
+void    traceroute_end(t_data *dt)
 {
-    display_ping_end_stats(dt);
+    // display_ping_end_stats(dt);
     close(dt->socket);
     free_all_malloc();
 }
@@ -69,8 +70,8 @@ int main(int ac, char **av)
     initialise_data(&dt, &parsed_cmd);
     signal(SIGINT, handle_sigint);
     traceroute_init(&dt);
-    // while (g_traceroute)
-    //     ping_sequence(&dt);
-    // ping_end(&dt);
+    while (g_traceroute)
+        trace_hops(&dt);
+    traceroute_end(&dt);
     return (0);
 }

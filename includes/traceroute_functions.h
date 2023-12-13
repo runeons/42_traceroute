@@ -12,6 +12,7 @@
 # include <netdb.h>
 # include <netinet/ip_icmp.h>
 # include <netinet/ip.h>
+# include <netinet/udp.h>
 # include <libft.h>
 # include <utils_colors.h>
 # include <utils_constants.h>
@@ -21,14 +22,16 @@
 
 //  craft.c
 void            craft_icmp(t_data *dt);
+void            craft_udp(t_data *dt);
 
 //  ping.c
-void            ping_sequence(t_data *dt);
+void            trace_hops(t_data *dt);
 
 //  socket.c
 void            resolve_hostname(t_data *dt);
 void            resolve_address(t_data *dt);
-void            open_socket(t_data *dt);
+void            open_raw_socket(t_data *dt);
+void            open_udp_socket(t_data *dt);
 void            set_socket_options(int socket, t_data *dt);
 
 //  options.c
@@ -45,7 +48,9 @@ void            display_ping_end_stats(t_data *dt);
 
 //  utils_debug.c
 void            debug_addrinfo(struct addrinfo *ai);
+void            debug_sockaddr_in(struct sockaddr_in *addr);
 void            debug_crafted_icmp(t_icmp *crafted_icmp);
+void            debug_crafted_udp(t_udp *crafted_udp);
 void            debug_packet(t_packet *packet);
 void            debug_msghdr(struct msghdr msg);
 void            debug_time(void *content);

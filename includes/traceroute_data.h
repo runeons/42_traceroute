@@ -24,6 +24,15 @@
 //     } un;
 // };
 
+// struct udphdr
+// {
+//   u_int16_t uh_sport;                /* source port */
+//   u_int16_t uh_dport;                /* destination port */
+//   u_int16_t uh_ulen;                /* udp length */
+//   u_int16_t uh_sum;                /* udp checksum */
+// };
+
+
 extern int g_traceroute;
 
 typedef struct  s_packet
@@ -68,6 +77,12 @@ typedef struct  s_options_params
     int         w_timeout;
 }               t_options_params;
 
+typedef struct  s_udp
+{
+	struct udphdr   h;
+	char            payload[UDP_D_LEN];
+}               t_udp;
+
 typedef struct  s_data
 {
     char                *input_dest;
@@ -80,6 +95,9 @@ typedef struct  s_data
 
     int                 max_hops;
     int                 nb_probes;
+
+    t_udp               crafted_udp;
+
 
     t_icmp              crafted_icmp;
     unsigned short int  id;

@@ -12,6 +12,26 @@ void    debug_addrinfo(struct addrinfo *ai)
     }
 }
 
+static char    *int_addr_to_str(int addr)
+{
+    char res[MAX_IP_LEN];
+    
+    sprintf(res, "%u.%u.%u.%u", addr & 0xFF, (addr >> 8) & 0xFF, (addr >> 16) & 0xFF, (addr >> 24) & 0xFF);
+    return (ft_strdup(res));
+}
+
+void    debug_sockaddr_in(struct sockaddr_in *addr)
+{
+    if (DEBUG == 1)
+    {
+        printf(C_B_RED"[DEBUG] sockaddr_in"C_RES"\n");
+        printf("        sin_family: %d\n", addr->sin_family);
+        printf("        sin_port: %d\n", addr->sin_port);
+        printf("        sin_addr.s_addr: %s (%d)\n", int_addr_to_str(addr->sin_addr.s_addr), addr->sin_addr.s_addr);
+        printf("\n");
+    }
+}
+
 void    debug_crafted_icmp(t_icmp *crafted_icmp)
 {
     if (DEBUG == 1)
@@ -27,6 +47,22 @@ void    debug_crafted_icmp(t_icmp *crafted_icmp)
         printf("h.un.echo.sequence: %d\n", crafted_icmp->h.un.echo.sequence);
         printf("h.un.echo.id: %x\n", crafted_icmp->h.un.echo.id);
         printf("h.un.echo.sequence: %x\n", crafted_icmp->h.un.echo.sequence);
+        printf("\n");
+    }
+}
+
+void    debug_crafted_udp(t_udp *crafted_udp)
+{
+    if (DEBUG == 1)
+    {
+        printf(C_G_RED"[DEBUG] crafted t_udp"C_RES"\n");
+        printf("sizeof(crafted_udp): %lu\n", sizeof(crafted_udp));
+        printf("sizeof(crafted_udp->payload): %lu\n", sizeof(crafted_udp->payload));
+        printf("payload: %s\n", crafted_udp->payload);
+        printf("h.uh_sport: %d\n", crafted_udp->h.uh_sport);
+        printf("h.uh_dport: %d\n", crafted_udp->h.uh_dport);
+        printf("h.uh_ulen: %d\n", crafted_udp->h.uh_ulen);
+        printf("h.uh_sum: %d\n", crafted_udp->h.uh_sum);
         printf("\n");
     }
 }
