@@ -12,7 +12,7 @@
 # define MAX_IP_LEN             16
 # define MAX_HOSTNAME_LEN       128
 
-# define MAX_TTL               30
+# define MAX_TTL               16
 # define NB_PROBES             3
 # define REPLY_TIMEOUT         5
 

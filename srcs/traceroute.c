@@ -5,6 +5,11 @@ void    display_traceroute_hop(t_data *dt, struct sockaddr_in *r_addr)
     printf("%-4d %s\n", dt->curr_ttl, addr_to_str(r_addr->sin_addr.s_addr));
 }
 
+void    display_traceroute_hop_NOK(t_data *dt, struct sockaddr_in *r_addr)
+{
+    printf(C_G_RED"%-4d %s %s\n"C_RES, dt->curr_ttl, addr_to_str(r_addr->sin_addr.s_addr), strerror(errno));
+}
+
 static void    handle_reply(t_data *dt, struct sockaddr_in *r_addr)
 {
     // if (dt->icmp_packet.h.type == ICMP_ERR_TIME_EXCEEDED)
@@ -34,8 +39,8 @@ static void    receive_icmp(t_data *dt)
         handle_reply(dt, &r_addr); // then, send new request after handle_reply when same id as request
     else
     {
-        warning_error(C_G_BLUE"No reply received"C_RES"\n"); // then, ignore and send new request if no reply received
-        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", strerror(r));
+        display_traceroute_hop_NOK(dt, &r_addr);
+        // warning_error(C_G_BLUE"No reply received"C_RES"\n"); // then, ignore and send new request if no reply received
     }
 }
 
