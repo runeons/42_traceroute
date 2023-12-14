@@ -32,8 +32,7 @@
 //   u_int16_t uh_sum;                /* udp checksum */
 // };
 
-
-extern int g_traceroute;
+extern int g_loop;
 
 typedef struct  s_packet
 {
@@ -49,34 +48,6 @@ typedef struct  s_icmp
 	char            payload[ICMP_PAYLOAD_LEN];
 }               t_icmp;
 
-typedef struct  s_ping_seq
-{
-    int             bytes;
-    int             icmp_seq_count;
-    int             ttl;
-    struct timeval  send_tv;
-    struct timeval  receive_tv;
-    char            r_packet[IP_TOTAL_LEN];
-    t_packet        final_packet;
-    int             time;
-}               t_ping_seq;
-
-typedef struct  s_ping_stats
-{
-    int sent_nb;
-    int recv_nb;
-    t_lst  *times;
-}               t_ping_stats;
-
-typedef struct  s_options_params
-{
-    char        p_payload[ICMP_PAYLOAD_LEN];
-    int         seq_interval_us;
-    int         count;
-    int         v;
-    int         w_timeout;
-}               t_options_params;
-
 typedef struct  s_udp
 {
 	struct udphdr   h;
@@ -85,27 +56,24 @@ typedef struct  s_udp
 
 typedef struct  s_data
 {
+    // general
     char                *input_dest;
     t_lst               *act_options;
     char                *resolved_address;
     char                *resolved_hostname;
-
-    int                 socket;
+    int                 socket_udp;
+    int                 socket_raw;
     struct sockaddr_in  address;
-
-    int                 max_hops;
+    int                 max_ttl;
     int                 nb_probes;
+    int                 reply_timeout;
 
-    t_udp               crafted_udp;
-
-
-    t_icmp              crafted_icmp;
-    unsigned short int  id;
-    struct timeval      tz;
-    struct timeval      init_tv;
-    t_ping_seq          one_seq;
-    t_ping_stats        end_stats;
-    t_options_params    options_params;
+    // each hop
+    int                 curr_ttl;
+    t_udp               udp_packet;
+    t_icmp              icmp_packet;
+    int                 dest_port;
+    int                 src_port;
 }					t_data;
 
 #endif

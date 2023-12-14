@@ -7,7 +7,7 @@ void resolve_address(t_data *dt) // check that dest exists and resolve address i
     struct addrinfo     *tmp;
 
     r = getaddrinfo(dt->input_dest, NULL, NULL, &resolved_add);
-    debug_addrinfo(resolved_add);
+    // debug_addrinfo(resolved_add);
     if (r != 0)
         exit_error("traceroute: unknown host\n");
     tmp = resolved_add;
@@ -24,8 +24,8 @@ void resolve_address(t_data *dt) // check that dest exists and resolve address i
         tmp = tmp->ai_next;
         break; // useful if many
     }
-    if (DEBUG == 1)
-        printf(C_B_RED"dt->resolved_address %s"C_RES"\n", dt->resolved_address);
+    // if (DEBUG == 1)
+    //     printf(C_B_RED"dt->resolved_address %s"C_RES"\n", dt->resolved_address);
     freeaddrinfo(resolved_add);
 }
 
@@ -46,35 +46,40 @@ void resolve_hostname(t_data *dt) // useful only when input_dest is ip address (
         if (dt->resolved_hostname == NULL)
             exit_error("traceroute: malloc failure.\n");
     }
-    if (DEBUG == 1)
-        printf(C_B_RED"dt->resolved_hostname %s"C_RES"\n", dt->resolved_hostname);
+    // if (DEBUG == 1)
+    //     printf(C_B_RED"dt->resolved_hostname %s"C_RES"\n", dt->resolved_hostname);
 }
 
 void open_raw_socket(t_data *dt)
 {
-    dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-    if (dt->socket < 0)
-        exit_error("traceroute: socket error: Check that you have the correct rights.\n");
+    dt->socket_raw = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+    if (dt->socket_raw < 0)
+        exit_error("traceroute: raw socket error: Check that you have the correct rights.\n");
 }
 
 void open_udp_socket(t_data *dt)
 {
-    dt->socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (dt->socket < 0)
-        exit_error("traceroute: socket error: Please retry.\n");
+    dt->socket_udp = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (dt->socket_udp < 0)
+        exit_error("traceroute: udp socket error: Please retry.\n");
 }
 
-void set_socket_options(int socket, t_data *dt)
+void set_socket_option_ttl(int socket, t_data *dt)
 {
     int r           = 0;
-    int ttl_value   = dt->one_seq.ttl;
+
+    r = setsockopt(socket, IPPROTO_IP, IP_TTL, &dt->curr_ttl, sizeof(dt->curr_ttl));
+    if (r != 0)
+        exit_error_clear(dt, "traceroute: socket error in setting TTL option: Exiting program.\n");
+}
+
+void set_socket_option_timeout(int socket, t_data *dt)
+{
+    int r           = 0;
     struct timeval tv_out;
-	tv_out.tv_sec = 1;
+	tv_out.tv_sec = dt->reply_timeout;
 	tv_out.tv_usec = 0;
     r = setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &tv_out, sizeof(tv_out)); // setting timeout option
     if (r != 0)
-        exit_error_close(dt->socket, "traceroute: socket error in setting timeout option: Exiting program.\n");
-    r = setsockopt(socket, IPPROTO_IP, IP_TTL, &ttl_value, sizeof(ttl_value)); // setting TTL option 
-    if (r != 0)
-        exit_error_close(dt->socket, "traceroute: socket error in setting TTL option: Exiting program.\n");
+        exit_error_clear(dt, "traceroute: socket error in setting timeout option: Exiting program.\n");
 }

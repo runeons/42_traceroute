@@ -4,6 +4,20 @@
 // de la somme des one complements de l'udp header
 // pris par mots de 16 bits / 2 bytes / unsigned short
 
+char    *int_to_bin(int n, int len)
+{
+    char    *bin;
+    int     k = 0;
+
+    bin = (char*)mmalloc(sizeof(char) * len);
+    if (bin == NULL)
+        exit_error("ping: malloc failure.");
+    for (unsigned i = (1 << (len - 1)); i > 0; i = i / 2)
+        bin[k++] = (n & i) ? '1' : '0';
+    bin[k] = '\0';
+    return (bin);
+}
+
 static unsigned short header_checksum(void *packet, int len)
 {
     unsigned short *tmp;
@@ -18,38 +32,31 @@ static unsigned short header_checksum(void *packet, int len)
         len -= sizeof(*tmp);
     }
     checksum = (unsigned short)(~((checksum >> 16) + (checksum & 0xFFFF))); // final one complement
-    if (DEBUG == 1)
-    {
-        printf(C_B_RED "[DEBUG] checksum: %d, checksum: [%s]" C_RES "\n", checksum, int_to_bin(checksum, 16));
-    }
+    // if (DEBUG == 1)
+    // {
+    //     printf(C_B_RED "[DEBUG] checksum: %d, checksum: [%s]" C_RES "\n", checksum, int_to_bin(checksum, 16));
+    // }
     return (checksum);
 }
 
 static void craft_udp_data(t_data *dt)
 {
-    struct timeval current_time;
-
-    if (gettimeofday(&current_time, NULL) != 0)
-        exit_error_close(dt->socket, "ping: cannot retrieve time\n");
-    ft_memset(&dt->crafted_udp, 0, sizeof(dt->crafted_udp));
-    printf(C_G_RED"[QUICK DEBUG] UDP_PAYLOAD: %s"C_RES"\n", UDP_PAYLOAD);
     for (int i = 0; i < UDP_D_LEN; i++)
-        dt->crafted_udp.payload[i] = UDP_PAYLOAD[i];
-    dt->crafted_udp.payload[UDP_D_LEN] = '\0';
-    // dt->one_seq.udp_seq_count++;
+        dt->udp_packet.payload[i] = UDP_PAYLOAD[i];
+    dt->udp_packet.payload[UDP_D_LEN] = '\0';
 }
 
 static void craft_udp_header(t_data *dt)
 {
-    dt->crafted_udp.h.uh_sport = 44558; // RDM ?
-    dt->crafted_udp.h.uh_dport = 34434;
-    dt->crafted_udp.h.uh_ulen = 40;
-    dt->crafted_udp.h.uh_sum = header_checksum(&dt->crafted_udp, sizeof(dt->crafted_udp));
+    dt->udp_packet.h.uh_sport = htons(dt->src_port); // RDM ?
+    dt->udp_packet.h.uh_dport = htons(dt->dest_port);
+    dt->udp_packet.h.uh_ulen = sizeof(t_udp);
+    dt->udp_packet.h.uh_sum = header_checksum(&dt->udp_packet, sizeof(dt->udp_packet));
 }
 
 void craft_udp(t_data *dt)
 {
-    ft_bzero(&dt->crafted_udp, sizeof(dt->crafted_udp));
+    ft_memset(&dt->udp_packet, 0, sizeof(dt->udp_packet));
     craft_udp_data(dt);
     craft_udp_header(dt);
 }

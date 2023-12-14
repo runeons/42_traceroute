@@ -1,120 +1,69 @@
 #include "traceroute_functions.h"
 
-static int    is_same_id(t_data *dt) // is reply id the same as request id
+static void    handle_reply(t_data *dt, struct sockaddr_in *r_addr)
 {
-    if (dt->one_seq.final_packet.icmp->un.echo.id == dt->id) // same id in icmp header
-        return (1);
-    else 
-    {
-        unsigned char *bytes = (unsigned char *)dt->one_seq.final_packet.icmp;
-        struct icmphdr  *icmp_in_payload = (struct icmphdr *)(bytes + IP_HEADER_LEN + ICMP_HEADER_LEN);
-
-        if (icmp_in_payload->un.echo.id == dt->id)  // same id in icmp header in payload (when Unreachable)
-            return (1);
-        else
-            return (0);
-    }
-}
-
-static void    save_packet(t_data *dt)
-{
-    ft_bzero(&dt->one_seq.final_packet, sizeof(dt->one_seq.final_packet));
-    dt->one_seq.final_packet.ip = (struct iphdr *)dt->one_seq.r_packet;
-    dt->one_seq.final_packet.icmp = (struct icmphdr *)(dt->one_seq.r_packet + IP_HEADER_LEN);
-    dt->one_seq.final_packet.payload = (char *)(dt->one_seq.r_packet + IP_HEADER_LEN + ICMP_HEADER_LEN);
-}
-
-static void    save_time(t_data *dt)
-{
-    int *time;
-
-    if (gettimeofday(&dt->one_seq.receive_tv, &dt->tz) != 0)
-        exit_error_close(dt->socket, "ping: cannot retrieve time\n");
-    if (!(time = mmalloc(sizeof(int))))
-        exit_error_close(dt->socket, "ping: malloc failure.");
-    *time = (dt->one_seq.receive_tv.tv_sec - dt->one_seq.send_tv.tv_sec) * 1000000 + dt->one_seq.receive_tv.tv_usec - dt->one_seq.send_tv.tv_usec;
-    dt->one_seq.time = *time;
-    ft_lst_add_node_back(&dt->end_stats.times, ft_lst_create_node(time));
-}
-
-static void    handle_reply(t_data *dt, struct msghdr *msgh)
-{
-    dt->one_seq.bytes = sizeof(*msgh) + ICMP_HEADER_LEN;
-    if (dt->one_seq.final_packet.icmp->type == ICMP_ECHO_REPLY)
-    {
-        save_time(dt);
-        display_ping_OK(dt);
-        dt->end_stats.recv_nb++;
-    }
+    if (dt->icmp_packet.h.type == ICMP_ERR_TIME_EXCEEDED)
+        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", "Time to live exceeded");
+    else if (dt->icmp_packet.h.type == ICMP_ERR_UNREACHABLE)
+        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", "Destination Host Unreachable");
+    else if (dt->icmp_packet.h.type == ICMP_ECHO_REPLY)
+        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", "OK Echo Reply");
     else
-    {
-        if (dt->one_seq.final_packet.icmp->type == ICMP_ERR_UNREACHABLE)
-            display_ping_error(dt, "Destination Host Unreachable");
-        else if (dt->one_seq.final_packet.icmp->type == ICMP_ERR_TIME_EXCEEDED)
-            display_ping_error(dt, "Time to live exceeded");
-        else
-        {
-            if (VERBOSE == 1)
-                warning_error(C_G_BLUE"Packet type %d"C_RES"\n", dt->one_seq.final_packet.icmp->type);
-        }
-    }
-    debug_packet(&(dt->one_seq.final_packet));
+        warning_error(C_G_BLUE"Packet type %d"C_RES"\n", dt->icmp_packet.h.type);
+    printf("ICMP received from TTL %d:\n", dt->curr_ttl);
+    debug_sockaddr_in(r_addr);
+    debug_icmp(&dt->icmp_packet);
 }
 
-static void    receive_packet(t_data *dt)
+static void    receive_icmp(t_data *dt)
 {
-    int                     r = 0;	
-    struct msghdr           msgh;
-    int                     same_id = 0;
-    while (g_traceroute)
-    {
-        ft_memset(&msgh, 0, sizeof(msgh));
-        init_recv_msgh(&msgh, dt->one_seq.r_packet, dt->socket);
-        r = recvmsg(dt->socket, &msgh, 0);
-        if (r >= 0)
-        {
-            save_packet(dt);
-            same_id = is_same_id(dt);
-            if (same_id == 0)
-                continue; // don't handle this reply if not the same id - wait for another reply
-            handle_reply(dt, &msgh);
-            break; // send new request after handle_reply when same id as request
-        }
-        else
-        {
-            if (VERBOSE == 1)
-                warning_error(C_G_BLUE"No reply received"C_RES"\n"); // ignore and send new request if no reply received
-            break;
-        }
-    }
+    int                 r = 0;	
+	struct sockaddr_in  r_addr;
+	int		            r_addr_len = 0;
+
+	r_addr_len = sizeof(r_addr);
+    memset(&dt->icmp_packet, 0, sizeof(dt->icmp_packet));
+    r = recvfrom(dt->socket_raw, &dt->icmp_packet, sizeof(dt->icmp_packet), 0, (struct sockaddr *)&r_addr, (socklen_t *)&r_addr_len);
+    if (r >= 0)
+        handle_reply(dt, &r_addr); // then, send new request after handle_reply when same id as request
+    else
+        warning_error(C_G_BLUE"No reply received"C_RES"\n"); // then, ignore and send new request if no reply received
 }
 
-static void    send_udp_and_receive_packet(t_data *dt)    
+static void    update_address(t_data *dt)
 {
-    int                     r = 0;	
+    dt->address.sin_port = dt->dest_port; // TO CHECK - need dt->dest_port ?
+}
+
+
+static void    send_udp_and_receive_icmp(t_data *dt)    
+{
+    int     r = 0;	
     
-    dt->address.sin_port = dt->crafted_udp.h.uh_dport;
-    if (gettimeofday(&dt->one_seq.send_tv, &dt->tz) != 0)
-        exit_error_close(dt->socket, "ping: cannot retrieve time\n");
-    debug_sockaddr_in(&dt->address);
-    r = sendto(dt->socket, &dt->crafted_udp, sizeof(dt->crafted_udp), 0, (struct sockaddr*)&dt->address, sizeof(dt->address));
+    r = sendto(dt->socket_udp, &dt->udp_packet,  sizeof(dt->udp_packet), 0, (struct sockaddr *)&dt->address, sizeof(dt->address));
     if (r <= 0)
         warning_error(C_G_RED"packet sending failure : %s"C_RES"\n", strerror(r));
-    else if (r != sizeof(dt->crafted_udp))
+    else if (r != sizeof(dt->udp_packet))
         warning_error(C_G_RED"packet not completely sent"C_RES"\n");
     else
     {
-        dt->end_stats.sent_nb++;
-        printf(C_G_RED"[QUICK DEBUG] : %s"C_RES"\n", "SENT");
-        exit(1);
-        receive_packet(dt);
+        open_raw_socket(dt);
+        set_socket_option_timeout(dt->socket_raw, dt);
+        receive_icmp(dt);
     }
 }
 
-void trace_hops(t_data *dt)
+void traceroute(t_data *dt)
 {
+    set_socket_option_ttl(dt->socket_udp, dt);
     craft_udp(dt);
-    debug_crafted_udp(&dt->crafted_udp);
-    send_udp_and_receive_packet(dt);
-    // usleep(dt->options_params.seq_interval_us);
+    debug_udp(&dt->udp_packet);
+    update_address(dt);
+    debug_sockaddr_in(&dt->address);
+	usleep(1000000);
+    send_udp_and_receive_icmp(dt);
+    
+    dt->curr_ttl++;
+    dt->dest_port++;
+    dt->src_port++;
 }

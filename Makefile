@@ -41,7 +41,6 @@ HEADER					=	\
 SRCS_DIR					=	./srcs/
 
 SRCS_LIST					=	\
-							craft_icmp.c \
 							craft_udp.c \
 							display.c \
 							init_data.c \
@@ -50,9 +49,7 @@ SRCS_LIST					=	\
 							main.c \
 							traceroute.c \
 							utils_debug.c \
-							utils_libft.c \
 							utils_options.c \
-							utils_time.c \
 
 SRCS					=	$(addprefix $(SRCS_DIR), $(SRCS_LIST))
 
