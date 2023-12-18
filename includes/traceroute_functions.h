@@ -11,6 +11,7 @@
 # include <arpa/inet.h>
 # include <netdb.h>
 # include <netinet/ip_icmp.h>
+# include <net/ethernet.h>
 # include <netinet/ip.h>
 # include <netinet/udp.h>
 # include <libft.h>
@@ -29,13 +30,14 @@ void            craft_udp(t_data *dt);
 //  traceroute.c
 void            traceroute(t_data *dt);
 
+//  reach_hop.c
+void            reach_hop(t_data *dt, int ttl);
+
 //  socket.c
 void            resolve_hostname(t_data *dt);
 void            resolve_address(t_data *dt);
-void            open_raw_socket(t_data *dt);
-void            open_udp_socket(t_data *dt);
-void            set_socket_option_ttl(int socket, t_data *dt);
-void            set_socket_option_timeout(int socket, t_data *dt);
+void            bind_socket_to_src_port(t_data *dt, int src_port);
+void            open_main_socket(t_data *dt);
 
 //  options.c
 void            init_options_params(t_data *dt);
@@ -44,13 +46,14 @@ void            init_options_params(t_data *dt);
 void            init_data(t_data *dt, t_parsed_cmd *parsed_cmd);
 
 //  display.c
-char            *addr_to_str(int addr);
 void            display_traceroute_init(t_data *dt);
+
+// utils_verbose.c
+void            verbose_full_reply(void *packet);
+void            verbose_full_send(void *packet);
 
 //  utils_debug.c
 void            debug_addrinfo(struct addrinfo *ai);
 void            debug_sockaddr_in(struct sockaddr_in *addr);
-void            debug_icmp(t_icmp *icmp_packet);
-void            debug_udp(t_udp *udp_packet);
 
 #endif
