@@ -8,12 +8,10 @@
 # include <signal.h>
 # include <sys/time.h>
 # include <sys/socket.h>
-# include <arpa/inet.h>
-# include <netdb.h>
-# include <netinet/ip_icmp.h>
-# include <net/ethernet.h>
-# include <netinet/ip.h>
-# include <netinet/udp.h>
+# include <arpa/inet.h>         // inet_ntoa
+# include <netdb.h>             // addrinfo
+# include <netinet/ip_icmp.h>   // struct icmphdr
+# include <netinet/udp.h>       // struct udphdr
 # include <libft.h>
 # include <utils_colors.h>
 # include <utils_constants.h>
