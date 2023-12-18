@@ -3,7 +3,6 @@
 
 int g_loop = 1;
 
-
 void    handle_sigint(int err)
 {
     (void)err;

@@ -47,6 +47,8 @@ void            init_data(t_data *dt, t_parsed_cmd *parsed_cmd);
 
 //  display.c
 void            display_traceroute_init(t_data *dt);
+void            display_hop(t_data *dt, struct sockaddr_in hop_addr);
+void            display_hop_timeout(t_data *dt);
 
 // utils_verbose.c
 void            verbose_full_reply(void *packet);

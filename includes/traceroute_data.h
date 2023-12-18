@@ -25,8 +25,9 @@ typedef struct  s_data
     // each hop
     int                 curr_ttl;
     int                 curr_probe;
+    int                 curr_probe_time;
     // time
-    t_lst               *times;
+    t_lst               *hop_times;
     struct timeval      tz;
     struct timeval      init_tv;
     struct timeval      send_tv;

@@ -1,22 +1,5 @@
 #include "traceroute_functions.h"
 
-void    display_hop(t_data *dt, struct sockaddr_in hop_addr)
-{
-    if (dt->curr_probe == 1)
-        printf("%-4d ", dt->curr_ttl);
-    printf("%s ", inet_ntoa(hop_addr.sin_addr));
-    if (dt->curr_probe == dt->nb_probes)
-        printf("\n");
-}
-
-void    display_hop_timeout(t_data *dt)
-{
-    if (dt->curr_probe == 1)
-        printf("%-4d ", dt->curr_ttl);
-    printf("* ");
-    if (dt->curr_probe == dt->nb_probes)
-        printf("\n");
-}
 
 void    craft_ip_header(t_data *dt, struct ip *ip_h)
 {
@@ -44,6 +27,8 @@ void    send_packet(t_data *dt, void *packet)
         exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
     if (r == 0)
         printf(C_B_RED"Not entirely sent"C_RES"\n");
+    if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
+        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
     verbose_full_send(packet);
 }
 
@@ -53,13 +38,24 @@ void    init_fd_set(t_data *dt)
     FD_SET(dt->socket, &dt->read_set);
 }
 
+static void    save_time(t_data *dt)
+{
+    int *time;
+
+    if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
+        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
+    if (!(time = mmalloc(sizeof(int))))
+        exit_error_close(dt->socket, "traceroute: malloc failure.");
+    *time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
+    dt->curr_probe_time = *time;
+    ft_lst_add_node_back(&dt->hop_times, ft_lst_create_node(time));
+}
+
 void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr)
 {
     struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
 
-    // if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
-    //     exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-    // ft_lst_add_node_back(&dt->times, ft_lst_create_node(time));
+    save_time(dt);
     if (h->type == ICMP_TIME_EXCEEDED)
         display_hop(dt, hop_addr);
     else if (h->type == ICMP_UNREACH)
@@ -109,6 +105,7 @@ void    reach_hop(t_data *dt, int ttl)
     struct udphdr   *udp_h = (struct udphdr *)(sent_packet + sizeof(struct ip));
 
     dt->curr_ttl = ttl;
+    ft_del((void **)&dt->hop_times);
     for (int i = 1; i <= dt->nb_probes; i++)
     {
         dt->curr_probe = i;
