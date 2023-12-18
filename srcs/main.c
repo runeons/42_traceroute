@@ -80,9 +80,8 @@ int main(int ac, char **av)
     // debug_sockaddr_in(&dt.target_address);
     signal(SIGINT, handle_sigint);
     display_traceroute_init(&dt);
-    while (g_loop)
-        while (g_loop && ttl <= dt.max_ttl)
-            reach_hop(&dt, ttl++);  
+    while (g_loop && ttl <= dt.max_ttl)
+        reach_hop(&dt, ttl++);  
     traceroute_end(&dt);
     return (0);
 }

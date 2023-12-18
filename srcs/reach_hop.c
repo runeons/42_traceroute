@@ -24,8 +24,8 @@ void    craft_ip_header(t_data *dt, struct ip *ip_h)
 
 void    craft_udp_header(t_data *dt, struct udphdr *udp_h)
 {
-    udp_h->uh_sport = htons(dt->src_port); // source port
-    udp_h->uh_dport = htons(dt->dst_port + dt->curr_ttl); // destination port
+    udp_h->uh_sport = htons(dt->src_port);
+    udp_h->uh_dport = htons(dt->dst_port + dt->curr_ttl);
     udp_h->uh_ulen = htons(sizeof(struct udphdr));
 }
 
@@ -104,4 +104,5 @@ void    reach_hop(t_data *dt, int ttl)
     craft_udp_header(dt, udp_h);
     send_packet(dt, sent_packet);
     receive_responses(dt);
+
 }
