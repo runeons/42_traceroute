@@ -2,14 +2,20 @@
 
 void    display_hop(t_data *dt, struct sockaddr_in hop_addr)
 {
-    if (g_loop)
-        printf("%-4d %s\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr));
+    if (dt->curr_probe == 1)
+        printf("%-4d ", dt->curr_ttl);
+    printf("%s ", inet_ntoa(hop_addr.sin_addr));
+    if (dt->curr_probe == dt->nb_probes)
+        printf("\n");
 }
 
 void    display_hop_timeout(t_data *dt)
 {
-    if (g_loop)
-        printf("%-4d *\n", dt->curr_ttl);
+    if (dt->curr_probe == 1)
+        printf("%-4d ", dt->curr_ttl);
+    printf("* ");
+    if (dt->curr_probe == dt->nb_probes)
+        printf("\n");
 }
 
 void    craft_ip_header(t_data *dt, struct ip *ip_h)
@@ -51,6 +57,9 @@ void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr
 {
     struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
 
+    // if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
+    //     exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
+    // ft_lst_add_node_back(&dt->times, ft_lst_create_node(time));
     if (h->type == ICMP_TIME_EXCEEDED)
         display_hop(dt, hop_addr);
     else if (h->type == ICMP_UNREACH)
@@ -69,7 +78,7 @@ void    init_timeout(t_data *dt, struct timeval *timeout)
     timeout->tv_usec = 0;
 }
 
-void    receive_responses(t_data *dt)
+void    receive_response(t_data *dt)
 {
     struct timeval      timeout;
     struct sockaddr_in  hop_addr;
@@ -100,9 +109,15 @@ void    reach_hop(t_data *dt, int ttl)
     struct udphdr   *udp_h = (struct udphdr *)(sent_packet + sizeof(struct ip));
 
     dt->curr_ttl = ttl;
-    craft_ip_header(dt, ip_h);
-    craft_udp_header(dt, udp_h);
-    send_packet(dt, sent_packet);
-    receive_responses(dt);
+    for (int i = 1; i <= dt->nb_probes; i++)
+    {
+        dt->curr_probe = i;
+        craft_ip_header(dt, ip_h);
+        craft_udp_header(dt, udp_h);
+        send_packet(dt, sent_packet);
+        receive_response(dt);
+    }
+
+
 
 }

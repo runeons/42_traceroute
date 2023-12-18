@@ -14,7 +14,7 @@
 # define IP_HL                  5
 # define IP_VERSION             4
 
-# define PACKET_SIZE            70
+# define PACKET_SIZE            60
 
 # define MAX_TTL                12
 # define NB_PROBES              3

@@ -4,7 +4,7 @@ void    verbose_h_dump(char *title, void *h, int len)
 {
     unsigned char *bytes = (unsigned char *)h;
 
-    if (g_loop)
+    if (VERBOSE && g_loop)
     {
         printf("%-10s", title);
         for (int i = 0; i < len; i = i + 2)

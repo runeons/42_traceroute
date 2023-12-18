@@ -13,6 +13,7 @@ typedef struct  s_data
     char                *resolved_address;
     char                *resolved_hostname;
     int                 socket;
+    fd_set              read_set;
     struct sockaddr_in  local_address;
     struct sockaddr_in  target_address;
     int                 dst_port;
@@ -21,9 +22,15 @@ typedef struct  s_data
     int                 max_ttl;
     int                 nb_probes;
     int                 reply_timeout;
-    fd_set              read_set;
     // each hop
     int                 curr_ttl;
+    int                 curr_probe;
+    // time
+    t_lst               *times;
+    struct timeval      tz;
+    struct timeval      init_tv;
+    struct timeval      send_tv;
+    struct timeval      recv_tv;
 }					t_data;
 
 // struct icmphdr

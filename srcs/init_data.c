@@ -15,6 +15,7 @@ void init_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     dt->reply_timeout       = 0;
     // each hop
     dt->curr_ttl = 1;
+    dt->curr_probe = 0;
 	dt->dst_port = 33434;
 	dt->src_port = 32123; // TO DO RDM
     // addresses
