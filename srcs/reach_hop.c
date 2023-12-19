@@ -58,7 +58,6 @@ void    track_probe(t_data *dt)
     probe->time = 0;
     probe->name = NULL;
     ft_memset(&(probe->address), 0, sizeof(struct sockaddr_in));
-    // ft_memset(probe->name, 0, MAX_HOSTNAME_LEN);
     ft_lst_add_node_back(&dt->hop_probes, ft_lst_create_node(probe));
 }
 

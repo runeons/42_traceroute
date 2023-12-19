@@ -16,11 +16,10 @@ static void    save_time(t_data *dt)
         ((t_probe *)last->content)->time = *time;
 }
 
-static void     save_name(t_data *dt, struct sockaddr_in hop_addr)
+static void     save_name(t_data *dt, struct sockaddr_in hop_addr) // TO DO SIMPLIFY
 {
     char    host[MAX_HOSTNAME_LEN];
     int     r = 0;
-    // char    *name = NULL;
     t_lst   *last = NULL;
 
 
@@ -39,6 +38,7 @@ static void     save_name(t_data *dt, struct sockaddr_in hop_addr)
         }
     }
 }
+
 static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr)
 {
     struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
@@ -46,7 +46,7 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
     save_time(dt);
     save_name(dt, hop_addr);
     if (h->type == ICMP_TIME_EXCEEDED || h->type == ICMP_UNREACH)
-        display_hop(dt, hop_addr);
+        display_hop(dt);
     if (h->type == ICMP_UNREACH)
         g_loop = 0;
     // else

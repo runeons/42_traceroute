@@ -7,23 +7,6 @@ void    display_traceroute_init(t_data *dt)
         exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
 }
 
-static void resolve_hop_name(t_data *dt, struct sockaddr_in hop_addr)
-{
-    char    host[MAX_HOSTNAME_LEN];
-    int r = 0;
-
-    ft_bzero(host, MAX_HOSTNAME_LEN);
-    r = getnameinfo((struct sockaddr*)&(hop_addr), sizeof(hop_addr), host, sizeof(host), NULL, 0, 0);
-    if (r != 0)
-        exit_error("traceroute: address error: The hop name could not be resolved. %d\n", r);
-    else
-    {
-        dt->hop_name = ft_strdup(host);
-        if (dt->hop_name == NULL)
-            exit_error("traceroute: malloc failure.\n");
-    }
-}
-
 t_probe *get_probe(t_lst *hop_probes, int nb)
 {
     while (hop_probes != NULL)
@@ -42,14 +25,11 @@ static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
     if (is_activated_option(dt->act_options, 'n'))
         sprintf(buf, "%s", inet_ntoa(curr_probe->address.sin_addr));
     else
-    {
-        resolve_hop_name(dt, curr_probe->address);
-        sprintf(buf, "%s (%s)", dt->hop_name, inet_ntoa(curr_probe->address.sin_addr));
-    }
+        sprintf(buf, "%s (%s)", curr_probe->name, inet_ntoa(curr_probe->address.sin_addr));
     return (buf);
 }
 
-int     is_new_address(t_data *dt, t_probe *curr_probe)
+int     is_new_address(t_data *dt, t_probe *curr_probe) // TO DO CLEAN
 {
     if (curr_probe->nb == 1)
         return (1);
@@ -63,11 +43,10 @@ int     is_new_address(t_data *dt, t_probe *curr_probe)
     return (1);
 }
 
-void    display_hop(t_data *dt, struct sockaddr_in hop_addr)
+void    display_hop(t_data *dt)
 {
     char    buf[512];
 
-    (void)hop_addr;
     t_probe *curr_probe = (t_probe *)ft_lst_get_last_node(&dt->hop_probes)->content; // TO DO PROTECT BY DESIGN
     if (dt->curr_probe == 1)
         printf("%-4d  ", dt->curr_ttl);
