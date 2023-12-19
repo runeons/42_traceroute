@@ -13,8 +13,11 @@ void    craft_ip_header(t_data *dt, struct ip *ip_h)
 
 void    craft_udp_header(t_data *dt, struct udphdr *udp_h)
 {
+    dt->dst_port = (dt->dst_port + 1) % MAX_PORT;
+    if (dt->dst_port == 0)
+        dt->dst_port++;
     udp_h->uh_sport = htons(dt->src_port);
-    udp_h->uh_dport = htons(dt->dst_port + dt->curr_ttl);
+    udp_h->uh_dport = htons(dt->dst_port);
     udp_h->uh_ulen = htons(sizeof(struct udphdr));
 }
 

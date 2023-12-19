@@ -18,7 +18,7 @@ void   option_q(t_data *dt)
         else if (nb_probes > 255)
             exit_error("traceroute: option value too big: %d\n", nb_probes);
         else
-            dt->nb_probes = ft_atoi(param);
+            dt->nb_probes = nb_probes;
     }
     else
         dt->nb_probes = NB_PROBES;
@@ -42,7 +42,7 @@ void   option_m(t_data *dt)
         else if (max_ttl > 255)
             exit_error("traceroute: option value too big: %d\n", max_ttl);
         else
-            dt->max_ttl = ft_atoi(param);
+            dt->max_ttl = max_ttl;
     }
     else
         dt->max_ttl = MAX_TTL;
@@ -66,7 +66,7 @@ void   option_w(t_data *dt)
         else if (reply_timeout > 255)
             exit_error("traceroute: option value too big: %d\n", reply_timeout);
         else
-            dt->reply_timeout = ft_atoi(param);
+            dt->reply_timeout = reply_timeout;
     }
     else
         dt->reply_timeout = REPLY_TIMEOUT;
@@ -98,13 +98,37 @@ void   option_z(t_data *dt)
         dt->probes_interval_us = PROBES_INTERVAL_S * 1000000;
 }
 
+void   option_p(t_data *dt)
+{
+    int  dst_port  = 0;
+    char *param     = NULL;
+
+    if (is_activated_option(dt->act_options, 'p'))
+    {
+        param = ft_strdup(get_option(dt->act_options, 'p')->param);
+        if (param == NULL)
+            exit_error("traceroute: malloc failure.\n");
+        if (ft_isstrnum(param) == 0)
+            exit_error("traceroute: invalid value: (`%s' near `%s')\n", param, param);
+        dst_port = ft_atoi(param);
+        if (dst_port <= 0)
+            exit_error("traceroute: option value too small: %d\n", dst_port);
+        else if (dst_port > MAX_PORT)
+            exit_error("traceroute: option value too big: %d\n", dst_port);
+        else
+            dt->dst_port = dst_port;
+    }
+    else
+        dt->dst_port = DST_PORT;
+}
+
 void    init_options_params(t_data *dt)
 {
     option_q(dt);
     option_m(dt);
     option_w(dt);
     option_z(dt);
-    // option_p(dt);
+    option_p(dt);
     // option_s(dt);
     // option_f(dt);
 }
