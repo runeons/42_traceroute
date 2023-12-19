@@ -27,6 +27,7 @@ typedef struct  s_data
     int                 curr_ttl;
     int                 curr_probe;
     int                 curr_probe_time;
+    char                *hop_name;
     // time
     t_lst               *hop_times;
     struct timeval      tz;
