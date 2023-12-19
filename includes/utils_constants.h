@@ -3,7 +3,7 @@
 # define UTILS_CONSTANTS_H
 
 # define DEBUG                  0
-# define VERBOSE                0
+# define VERBOSE                00
 # define PRINT_BUF_SIZE         512
 # define MAX_IP_LEN             16
 # define MAX_HOSTNAME_LEN       128

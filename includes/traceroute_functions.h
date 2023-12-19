@@ -49,12 +49,16 @@ void            display_traceroute_init(t_data *dt);
 void            display_hop(t_data *dt);
 void            display_hop_timeout(t_data *dt);
 
+// utils_getters.c
+t_probe         *get_probe(t_lst *hop_probes, int nb);
+int             get_send_port(void *packet);
+int             get_reply_port(void *packet);
+
 // utils_verbose.c
 void            verbose_full_reply(void *packet);
 void            verbose_full_send(void *packet);
 
 //  utils_debug.c
-t_probe         *get_probe(t_lst *hop_probes, int nb);
 void            debug_addrinfo(struct addrinfo *ai);
 void            debug_sockaddr_in(struct sockaddr_in *addr);
 void            debug_one_probe(void *content);

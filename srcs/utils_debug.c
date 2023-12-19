@@ -1,17 +1,5 @@
 #include "traceroute_functions.h"
 
-t_probe *get_probe(t_lst *hop_probes, int nb)
-{
-    while (hop_probes != NULL)
-    {
-        t_probe *tmp = (t_probe *)hop_probes->content;
-        if (tmp->nb == nb)
-            return (tmp);
-        hop_probes = hop_probes->next;
-    }
-    return (NULL);
-}
-
 void    debug_one_probe(void *content)
 {
     if (content)

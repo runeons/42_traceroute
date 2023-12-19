@@ -50,6 +50,7 @@ SRCS_LIST					=	\
 							reach_hop.c \
 							receive_reply.c \
 							utils_debug.c \
+							utils_getters.c \
 							utils_options.c \
 							utils_verbose.c \
 

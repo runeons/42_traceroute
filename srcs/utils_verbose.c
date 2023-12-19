@@ -15,6 +15,8 @@ void    verbose_h_dump(char *title, void *h, int len)
 
 void    verbose_full_reply(void *packet)
 {
+    if (VERBOSE && g_loop)
+        printf("\n- - - - -\n");
     verbose_h_dump("   IPH",   packet,                                     sizeof(struct iphdr));
     verbose_h_dump("   ICMPH", packet + H_IP_LEN,                          sizeof(struct icmphdr));
     verbose_h_dump("   IPH",   packet + H_IP_LEN + H_ICMP_LEN,             sizeof(struct iphdr));
@@ -23,6 +25,8 @@ void    verbose_full_reply(void *packet)
 
 void    verbose_full_send(void *packet)
 {
+    if (VERBOSE && g_loop)
+        printf("\n- - - - -\n");
     verbose_h_dump("   IP",    packet,             sizeof(struct iphdr));
     verbose_h_dump("   UDPH",  packet + H_IP_LEN,  sizeof(struct udphdr));
 }
