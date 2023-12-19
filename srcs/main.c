@@ -31,13 +31,6 @@ void    exit_error_clear(t_data *dt, const char *msg, ...)
     exit(1);
 }
 
-
-void    add_destination(t_data *dt, char *curr_arg)
-{
-    if (dt)
-        dt->input_dest = curr_arg;
-}
-
 void    option_h()
 {
     display_help();
@@ -51,6 +44,12 @@ void    parse_input(t_parsed_cmd *parsed_cmd, int ac, char **av)
         option_h();
     *parsed_cmd = parse_options(ac, av);
     // debug_activated_options(parsed_cmd->act_options);
+}
+
+void    add_destination(t_data *dt, char *curr_arg)
+{
+    if (dt)
+        dt->input_dest = curr_arg;
 }
 
 void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
