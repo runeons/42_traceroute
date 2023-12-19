@@ -57,7 +57,7 @@ void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     init_data(dt, parsed_cmd);
     init_options_params(dt);
     if (ft_lst_size(parsed_cmd->not_options) != 1)
-        exit_error("ping: usage error: Destination required and only one.\n");
+        exit_error("traceroute: usage error: Destination required and only one.\n");
     else
         add_destination(dt, parsed_cmd->not_options->content);
     resolve_address(dt);
