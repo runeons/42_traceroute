@@ -13,6 +13,7 @@ void init_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     dt->max_ttl             = 0;
     dt->nb_probes           = 0;
     dt->reply_timeout       = 0;
+    dt->probes_interval_us  = 0;
     // each hop
     dt->curr_ttl = 1;
     dt->curr_probe = 0;

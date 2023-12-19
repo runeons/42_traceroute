@@ -19,6 +19,7 @@
 # define MAX_TTL                30
 # define NB_PROBES              3
 # define REPLY_TIMEOUT          2
+# define PROBES_INTERVAL_S      0
 
 // # define UDP_H_LEN             8
 // # define UDP_D_LEN             32

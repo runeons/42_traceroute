@@ -72,13 +72,39 @@ void   option_w(t_data *dt)
         dt->reply_timeout = REPLY_TIMEOUT;
 }
 
+void   option_z(t_data *dt)
+{
+    float  interval       = 0;
+    int    interval_us    = 0;
+    char   *param         = NULL;
+
+    if (is_activated_option(dt->act_options, 'z'))
+    {
+        param = ft_strdup(get_option(dt->act_options, 'z')->param);
+        if (param == NULL)
+            exit_error("traceroute: malloc failure.\n");
+        if (ft_isstrfloat(param) == 0)
+            exit_error("traceroute: invalid value (`%s' near `%s')\nTry 'traceroute --help' for more information.\n", param, param);
+        interval = ft_atof(param);
+        interval_us = (int)(interval * 1000000);
+        if (interval_us < 200000)
+            exit_error("traceroute: option value too small: %s\n", param);
+        else if (interval > 2048)
+            exit_error("traceroute: option value too big: %s\n", param);
+        else
+            dt->probes_interval_us = interval_us;
+    }
+    else
+        dt->probes_interval_us = PROBES_INTERVAL_S * 1000000;
+}
+
 void    init_options_params(t_data *dt)
 {
     option_q(dt);
     option_m(dt);
     option_w(dt);
+    option_z(dt);
     // option_p(dt);
     // option_s(dt);
-    // option_z(dt);
     // option_f(dt);
 }

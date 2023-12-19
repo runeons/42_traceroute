@@ -112,6 +112,7 @@ void    reach_hop(t_data *dt, int ttl)
         craft_udp_header(dt, udp_h);
         send_packet(dt, sent_packet);
         receive_response(dt);
+        usleep(dt->probes_interval_us);
     }
 
 
