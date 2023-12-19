@@ -10,7 +10,7 @@ typedef struct  s_probe
     int                 nb;
     int                 time;
     struct sockaddr_in  address;
-    char                name[MAX_HOSTNAME_LEN];
+    char                *name;
 }               t_probe;
 
 typedef struct  s_data

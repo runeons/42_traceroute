@@ -16,11 +16,35 @@ static void    save_time(t_data *dt)
         ((t_probe *)last->content)->time = *time;
 }
 
+static void     save_name(t_data *dt, struct sockaddr_in hop_addr)
+{
+    char    host[MAX_HOSTNAME_LEN];
+    int     r = 0;
+    // char    *name = NULL;
+    t_lst   *last = NULL;
+
+
+    ft_bzero(host, MAX_HOSTNAME_LEN);
+    r = getnameinfo((struct sockaddr*)&(hop_addr), sizeof(hop_addr), host, sizeof(host), NULL, 0, 0);
+    if (r != 0)
+        exit_error("traceroute: address error: The hop name could not be resolved. %d\n", r);
+    else
+    {
+        last = ft_lst_get_last_node(&dt->hop_probes);
+        if (last && last->content)
+        {
+            ((t_probe *)last->content)->name = ft_strdup(host);
+            if (((t_probe *)last->content)->name == NULL)
+                exit_error("traceroute: malloc failure.\n");
+        }
+    }
+}
 static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr)
 {
     struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
 
     save_time(dt);
+    save_name(dt, hop_addr);
     if (h->type == ICMP_TIME_EXCEEDED || h->type == ICMP_UNREACH)
         display_hop(dt, hop_addr);
     if (h->type == ICMP_UNREACH)
