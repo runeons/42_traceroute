@@ -41,6 +41,7 @@ HEADER					=	\
 SRCS_DIR					=	./srcs/
 
 SRCS_LIST					=	\
+							craft.c \
 							display.c \
 							init_data.c \
 							init_socket.c \
