@@ -1,6 +1,6 @@
 #include "traceroute_functions.h"
 
-void    craft_ip_header(t_data *dt, struct ip *ip_h)
+static void    craft_ip_header(t_data *dt, struct ip *ip_h)
 {
     ip_h->ip_hl         = IP_HL;
     ip_h->ip_v          = IP_VERSION;
@@ -10,7 +10,7 @@ void    craft_ip_header(t_data *dt, struct ip *ip_h)
     ip_h->ip_dst        = dt->target_address.sin_addr;
 }
 
-void    craft_udp_header(t_data *dt, struct udphdr *udp_h)
+static void    craft_udp_header(t_data *dt, struct udphdr *udp_h)
 {
     dt->dst_port = (dt->dst_port + 1) % MAX_PORT;
     if (dt->dst_port == 0)
