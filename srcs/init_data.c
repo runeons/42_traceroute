@@ -27,3 +27,17 @@ void init_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     dt->target_address.sin_port = 0;
     dt->target_address.sin_addr.s_addr = INADDR_ANY;
 }
+
+void    init_probe(t_data *dt)
+{
+    t_probe *probe = NULL;
+
+    probe = mmalloc(sizeof(t_probe));
+    if (probe == NULL)
+        exit_error_clear(dt, "traceroute: malloc failure.\n");
+    probe->nb = dt->curr_probe;
+    probe->time = 0;
+    probe->name = NULL;
+    ft_memset(&(probe->address), 0, sizeof(struct sockaddr_in));
+    ft_lst_add_node_back(&dt->hop_probes, ft_lst_create_node(probe));
+}

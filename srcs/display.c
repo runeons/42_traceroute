@@ -7,18 +7,6 @@ void    display_traceroute_init(t_data *dt)
         exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
 }
 
-t_probe *get_probe(t_lst *hop_probes, int nb)
-{
-    while (hop_probes != NULL)
-    {
-        t_probe *tmp = (t_probe *)hop_probes->content;
-        if (tmp->nb == nb)
-            return (tmp);
-        hop_probes = hop_probes->next;
-    }
-    return (NULL);
-}
-
 static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
 {
     ft_bzero(buf, 512);

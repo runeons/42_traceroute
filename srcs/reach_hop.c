@@ -46,20 +46,6 @@ void    send_packet(t_data *dt, void *packet)
     verbose_full_send(packet);
 }
 
-void    track_probe(t_data *dt)
-{
-    t_probe *probe = NULL;
-
-    probe = mmalloc(sizeof(t_probe));
-    if (probe == NULL)
-        exit_error_clear(dt, "traceroute: malloc failure.\n");
-    probe->nb = dt->curr_probe;
-    probe->time = 0;
-    probe->name = NULL;
-    ft_memset(&(probe->address), 0, sizeof(struct sockaddr_in));
-    ft_lst_add_node_back(&dt->hop_probes, ft_lst_create_node(probe));
-}
-
 void    reach_hop(t_data *dt)
 {
     char    udp_packet[PACKET_SIZE];
@@ -68,7 +54,7 @@ void    reach_hop(t_data *dt)
     reinit_hop(dt);
     while (dt->curr_probe <= dt->nb_probes)
     {
-        track_probe(dt);
+        init_probe(dt);
         craft_packet(dt, udp_packet);
         send_packet(dt, udp_packet);
         monitor_reply(dt);

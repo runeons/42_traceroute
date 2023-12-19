@@ -24,7 +24,19 @@ void    debug_sockaddr_in(struct sockaddr_in *addr)
     }
 }
 
-void debug_one_probe(void *content)
+t_probe *get_probe(t_lst *hop_probes, int nb)
+{
+    while (hop_probes != NULL)
+    {
+        t_probe *tmp = (t_probe *)hop_probes->content;
+        if (tmp->nb == nb)
+            return (tmp);
+        hop_probes = hop_probes->next;
+    }
+    return (NULL);
+}
+
+void    debug_one_probe(void *content)
 {
     if (content)
     {
@@ -33,7 +45,7 @@ void debug_one_probe(void *content)
     }
 }
 
-void debug_probes(t_data *dt)
+void    debug_probes(t_data *dt)
 {
     printf("\n_________________debug_probes_________________\n");
     ft_lst_iter_content(dt->hop_probes, debug_one_probe);
