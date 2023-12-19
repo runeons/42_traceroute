@@ -117,7 +117,4 @@ void    reach_hop(t_data *dt, int ttl)
         receive_response(dt);
         usleep(dt->probes_interval_us);
     }
-
-
-
 }
