@@ -53,6 +53,7 @@ void            display_hop_timeout(t_data *dt);
 t_probe         *get_probe(t_lst *hop_probes, int nb);
 int             get_send_port(void *packet);
 int             get_reply_port(void *packet);
+int             get_curr_send_port(t_data *dt);
 
 // utils_verbose.c
 void            verbose_full_reply(void *packet);

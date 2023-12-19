@@ -41,9 +41,15 @@ static void    send_packet(t_data *dt, void *packet)
         exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
     else if (r == 0)
         warning_error("Not entirely sent\n");
-    if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
-        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-    verbose_full_send(packet);
+    else
+    {
+        if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
+            exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
+        verbose_full_send(packet);
+        t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
+        if (curr)
+            curr->send_port = get_send_port(packet);
+    }
 }
 
 void    reach_hop(t_data *dt)

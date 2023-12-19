@@ -17,8 +17,17 @@ int     get_send_port(void *packet)
     int port = 0;
 
     port = *(int *)(packet + H_IP_LEN + 2);
-    printf(C_G_RED"[QUICK DEBUG] SEND  port: %d"C_RES"\n", ntohs(port));
     return (ntohs(port)); // TO DO make my own ?
+}
+
+int     get_curr_send_port(t_data *dt)
+{
+    int port = 0;
+
+    t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
+    if (curr)
+        port = curr->send_port;
+    return (port);
 }
 
 int     get_reply_port(void *packet)
@@ -26,6 +35,5 @@ int     get_reply_port(void *packet)
     int port = 0;
 
     port = *(int *)(packet + H_IP_LEN + H_ICMP_LEN + H_IP_LEN + 2);
-    printf(C_G_RED"[QUICK DEBUG] REPLY port: %d"C_RES"\n", ntohs(port));
     return (ntohs(port));
 }

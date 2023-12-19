@@ -9,6 +9,7 @@ typedef struct  s_probe
 {
     int                 nb;
     int                 time;
+    int                 send_port;
     struct sockaddr_in  address;
     char                *name;
 }               t_probe;

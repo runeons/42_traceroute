@@ -37,6 +37,7 @@ void    init_probe(t_data *dt)
         exit_error_clear(dt, "traceroute: malloc failure.\n");
     probe->nb = dt->curr_probe;
     probe->time = 0;
+    probe->send_port = 0;
     probe->name = NULL;
     ft_memset(&(probe->address), 0, sizeof(struct sockaddr_in));
     ft_lst_add_node_back(&dt->hop_probes, ft_lst_create_node(probe));

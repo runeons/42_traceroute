@@ -50,6 +50,18 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
     //         printf(C_B_RED"UNHANDLED %-4d %s"C_RES"\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr)); // TO DO check 127 // WHEN do I go there multi stress test
 }
 
+int     is_same_port(t_data *dt, char *recv_packet)
+{
+    int  reply_port = 0;
+    int  send_port  = 0;
+
+    reply_port = get_reply_port(recv_packet);
+    send_port = get_curr_send_port(dt);
+    if (reply_port == send_port)
+        return (1);
+    return(0);
+}
+
 void    receive_reply(t_data *dt)
 {
     char                recv_packet[PACKET_SIZE];
@@ -59,5 +71,6 @@ void    receive_reply(t_data *dt)
     if (recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len) == -1)
         exit_error_clear(dt, "Error receiving recv_packet %s %s\n", strerror(errno));
     verbose_full_reply(recv_packet);
+    // printf(C_G_RED"[QUICK DEBUG] reply_port == send_port: %d"C_RES"\n", is_same_port(dt, recv_packet));
     handle_reply(dt, recv_packet, *addr);
 }
