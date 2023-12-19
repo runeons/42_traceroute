@@ -66,12 +66,11 @@ void    bind_socket_to_src_port(t_data *dt, int src_port)
 void    open_main_socket(t_data *dt)
 {
     int         one  = 1;
-    const int   *val = &one;
 
     dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP); // change to 0 ?
     if (dt->socket < 0)
         exit_error("traceroute: socket error: Check that you have the correct rights.\n");
-    if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, val, sizeof(one)) < 0)
+    if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0)
         exit_error_clear(dt, "Error setting socket options %s\n", strerror(errno));
     FD_SET(dt->socket, &dt->read_set);
     bind_socket_to_src_port(dt, dt->src_port);

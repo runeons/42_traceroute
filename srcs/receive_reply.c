@@ -17,16 +17,13 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
     struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
 
     save_time(dt);
-    if (h->type == ICMP_TIME_EXCEEDED)
+    if (h->type == ICMP_TIME_EXCEEDED || h->type == ICMP_UNREACH)
         display_hop(dt, hop_addr);
-    else if (h->type == ICMP_UNREACH)
-    {
-        display_hop(dt, hop_addr);
+    if (h->type == ICMP_UNREACH)
         g_loop = 0;
-    }
-    else
-        if (g_loop)
-            printf(C_B_RED"UNHANDLED %-4d %s"C_RES"\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr)); // TO DO check 127 // WHEN do I go there multi stress test
+    // else
+    //     if (g_loop)
+    //         printf(C_B_RED"UNHANDLED %-4d %s"C_RES"\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr)); // TO DO check 127 // WHEN do I go there multi stress test
 }
 
 void    receive_reply(t_data *dt)
