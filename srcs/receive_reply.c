@@ -2,7 +2,7 @@
 
 static void    save_time(t_data *dt)
 {
-    int     *time;
+    int     *time = NULL;
     t_lst   *last = NULL;
 
     if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
@@ -10,7 +10,6 @@ static void    save_time(t_data *dt)
     if (!(time = mmalloc(sizeof(int))))
         exit_error_close(dt->socket, "traceroute: malloc failure.");
     *time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
-    ft_lst_add_node_back(&dt->hop_times, ft_lst_create_node(time));
     last = ft_lst_get_last_node(&dt->hop_probes);
     if (last && last->content)
         ((t_probe *)last->content)->time = *time;

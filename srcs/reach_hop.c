@@ -2,7 +2,6 @@
 
 void    reinit_hop(t_data *dt)
 {
-    ft_del((void **)&dt->hop_times);
     ft_del((void **)&dt->hop_probes);
     dt->curr_probe = 1;
 }
@@ -65,6 +64,7 @@ void    reach_hop(t_data *dt)
 {
     char    udp_packet[PACKET_SIZE];
 
+    ft_memset(udp_packet, 0, PACKET_SIZE);
     reinit_hop(dt);
     while (dt->curr_probe <= dt->nb_probes)
     {

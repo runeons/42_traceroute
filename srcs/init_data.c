@@ -19,7 +19,7 @@ void init_data(t_data *dt, t_parsed_cmd *parsed_cmd)
     dt->curr_probe          = 0;
 	dt->dst_port            = 0;
 	dt->src_port            = 32123; // TO DO RDM
-    dt->hop_name            = NULL;
+    dt->hop_probes          = NULL;
     // addresses
     ft_memset(&(dt->local_address), 0, sizeof(struct sockaddr_in));
     ft_memset(&(dt->target_address), 0, sizeof(struct sockaddr_in));
