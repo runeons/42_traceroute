@@ -24,7 +24,7 @@ static void resolve_hop_name(t_data *dt, struct sockaddr_in hop_addr)
     }
 }
 
-char    *hop_information(t_data *dt, char *buf, struct sockaddr_in hop_addr)
+static char    *hop_information(t_data *dt, char *buf, struct sockaddr_in hop_addr)
 {
     ft_bzero(buf, 512);
     if (is_activated_option(dt->act_options, 'n'))

@@ -58,5 +58,6 @@ void            verbose_full_send(void *packet);
 //  utils_debug.c
 void            debug_addrinfo(struct addrinfo *ai);
 void            debug_sockaddr_in(struct sockaddr_in *addr);
-
+void            debug_one_probe(void *content);
+void            debug_probes(t_data *dt);
 #endif

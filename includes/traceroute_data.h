@@ -5,6 +5,14 @@
 
 extern int g_loop;
 
+typedef struct  s_probe
+{
+    int                 nb;
+    int                 time;
+    struct sockaddr_in  address;
+    char                name[MAX_HOSTNAME_LEN];
+}               t_probe;
+
 typedef struct  s_data
 {
     // general
@@ -28,6 +36,7 @@ typedef struct  s_data
     int                 curr_probe;
     int                 curr_probe_time;
     char                *hop_name;
+    t_lst               *hop_probes; // liste de probes
     // time
     t_lst               *hop_times;
     struct timeval      tz;

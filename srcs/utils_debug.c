@@ -23,3 +23,18 @@ void    debug_sockaddr_in(struct sockaddr_in *addr)
         printf("\n");
     }
 }
+
+void debug_one_probe(void *content)
+{
+    if (content)
+    {
+        t_probe *p = (t_probe *)content;
+        printf("\n"C_G_RED"[PROBE %d] (%d) [%s] [%s]"C_RES"\n", p->nb, p->time, inet_ntoa(p->address.sin_addr), p->name);
+    }
+}
+
+void debug_probes(t_data *dt)
+{
+    printf("\n_________________debug_probes_________________\n");
+    ft_lst_iter_content(dt->hop_probes, debug_one_probe);
+}

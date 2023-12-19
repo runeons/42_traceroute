@@ -3,6 +3,7 @@
 void    reinit_hop(t_data *dt)
 {
     ft_del((void **)&dt->hop_times);
+    ft_del((void **)&dt->hop_probes);
     dt->curr_probe = 1;
 }
 
@@ -46,6 +47,20 @@ void    send_packet(t_data *dt, void *packet)
     verbose_full_send(packet);
 }
 
+void    track_probe(t_data *dt)
+{
+    t_probe *probe = NULL;
+
+    probe = mmalloc(sizeof(t_probe));
+    if (probe == NULL)
+        exit_error_clear(dt, "Malloc failure %s\n", strerror(errno));
+    probe->nb = dt->curr_probe;
+    probe->time = 0;
+    ft_memset(&(probe->address), 0, sizeof(struct sockaddr_in));
+    ft_memset(probe->name, 0, MAX_HOSTNAME_LEN);
+    ft_lst_add_node_back(&dt->hop_probes, ft_lst_create_node(probe));
+}
+
 void    reach_hop(t_data *dt)
 {
     char    udp_packet[PACKET_SIZE];
@@ -53,10 +68,12 @@ void    reach_hop(t_data *dt)
     reinit_hop(dt);
     while (dt->curr_probe <= dt->nb_probes)
     {
+        track_probe(dt);
         craft_packet(dt, udp_packet);
         send_packet(dt, udp_packet);
         monitor_reply(dt);
         usleep(dt->probes_interval_us);
+        // debug_probes(dt);
         dt->curr_probe++;
     }
     dt->curr_ttl++;

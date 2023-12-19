@@ -2,7 +2,8 @@
 
 static void    save_time(t_data *dt)
 {
-    int *time;
+    int     *time;
+    t_lst   *last = NULL;
 
     if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
         exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
@@ -10,6 +11,9 @@ static void    save_time(t_data *dt)
         exit_error_close(dt->socket, "traceroute: malloc failure.");
     *time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
     ft_lst_add_node_back(&dt->hop_times, ft_lst_create_node(time));
+    last = ft_lst_get_last_node(&dt->hop_probes);
+    if (last && last->content)
+        ((t_probe *)last->content)->time = *time;
 }
 
 static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr)
@@ -28,15 +32,14 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
 
 void    receive_reply(t_data *dt)
 {
-    struct sockaddr_in  hop_addr;
-    socklen_t           hop_addr_len = sizeof(hop_addr);
+    socklen_t           hop_addr_len = sizeof(struct sockaddr_in);
     char                recv_packet[PACKET_SIZE];
     int                 r = 0;
 
-    r = recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *) &hop_addr, &hop_addr_len);
+    struct sockaddr_in  *addr = &((t_probe *)(ft_lst_get_last_node(&dt->hop_probes)->content))->address; // TO DO PROTECT
+    r = recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len);
     if (r == -1)
         exit_error_clear(dt, "Error receiving recv_packet %s %s\n", strerror(errno));
     verbose_full_reply(recv_packet);
-    // printf(C_B_RED"\n[QUICK DEBUG] hop.addr: %s"C_RES"\n", inet_ntoa(hop_addr.sin_addr));
-    handle_reply(dt, recv_packet, hop_addr);
+    handle_reply(dt, recv_packet, *addr);
 }
