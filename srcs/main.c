@@ -68,7 +68,6 @@ int main(int ac, char **av)
 {
     t_data          dt;
     t_parsed_cmd    parsed_cmd;
-    int             ttl = 1;
 
     parse_input(&parsed_cmd, ac, av);
     if (is_activated_option(parsed_cmd.act_options, 'h'))
@@ -78,9 +77,8 @@ int main(int ac, char **av)
     // debug_sockaddr_in(&dt.target_address);
     signal(SIGINT, handle_sigint);
     display_traceroute_init(&dt);
-    ttl = dt.first_ttl;
-    while (g_loop && ttl <= dt.max_ttl)
-        reach_hop(&dt, ttl++);  
+    while (g_loop && dt.curr_ttl <= dt.max_ttl)
+        reach_hop(&dt);  
     traceroute_end(&dt);
     return (0);
 }

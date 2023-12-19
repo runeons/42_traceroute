@@ -29,7 +29,7 @@ void            craft_udp(t_data *dt);
 void            traceroute(t_data *dt);
 
 //  reach_hop.c
-void            reach_hop(t_data *dt, int ttl);
+void            reach_hop(t_data *dt);
 
 //  socket.c
 void            resolve_hostname(t_data *dt);

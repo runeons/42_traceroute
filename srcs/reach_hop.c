@@ -100,13 +100,12 @@ void    receive_response(t_data *dt)
         display_hop_timeout(dt);
 }
 
-void    reach_hop(t_data *dt, int ttl)
+void    reach_hop(t_data *dt)
 {
     char            sent_packet[PACKET_SIZE];
     struct ip       *ip_h  = (struct ip *)sent_packet;
     struct udphdr   *udp_h = (struct udphdr *)(sent_packet + sizeof(struct ip));
 
-    dt->curr_ttl = ttl;
     ft_del((void **)&dt->hop_times);
     for (int i = 1; i <= dt->nb_probes; i++)
     {
@@ -117,4 +116,5 @@ void    reach_hop(t_data *dt, int ttl)
         receive_response(dt);
         usleep(dt->probes_interval_us);
     }
+    dt->curr_ttl++;
 }

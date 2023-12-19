@@ -140,10 +140,10 @@ void   option_f(t_data *dt)
         else if (first_ttl >= dt->max_ttl)
             exit_error("traceroute: option first ttl value higher than max ttl: %d\n", first_ttl);
         else
-            dt->first_ttl = first_ttl;
+            dt->curr_ttl = first_ttl;
     }
     else
-        dt->first_ttl = FIRST_TTL;
+        dt->curr_ttl = FIRST_TTL;
 }
 
 void    init_options_params(t_data *dt)
