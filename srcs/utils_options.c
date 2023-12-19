@@ -9,6 +9,7 @@ t_option allowed_options[] =
     {'z', "sendwait",       1, "N",         NULL, "wait at least N seconds between sending each probe"}, // default 0
     {'p', "port",           1, "PORT",      NULL, "specify PORT as the starting destination port"},  // default 33434
     {'f', "first-ttl",      1, "N",         NULL, "specify N as first time-to-live / first hop to start"}, // default 1
+    {'n', "no-dns",         0, "",          NULL, "do not perform hop DNS lookup"},
     // {'s', "source",         1, "SRC",       NULL, "send outgoing probes from SRC address"},
     // {'I', "icmp",           0, "",          NULL, "send ICMP ECHO requests"}, // default 1UDP datagrams
 };
