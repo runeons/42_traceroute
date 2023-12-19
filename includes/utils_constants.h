@@ -18,6 +18,7 @@
 # define PACKET_SIZE            60
 
 # define MAX_TTL                30
+# define FIRST_TTL              1
 # define NB_PROBES              3
 # define REPLY_TIMEOUT          2
 # define PROBES_INTERVAL_S      0

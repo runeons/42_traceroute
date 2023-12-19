@@ -122,6 +122,30 @@ void   option_p(t_data *dt)
         dt->dst_port = DST_PORT;
 }
 
+void   option_f(t_data *dt)
+{
+    int  first_ttl  = 0;
+    char *param     = NULL;
+
+    if (is_activated_option(dt->act_options, 'f'))
+    {
+        param = ft_strdup(get_option(dt->act_options, 'f')->param);
+        if (param == NULL)
+            exit_error("traceroute: malloc failure.\n");
+        if (ft_isstrnum(param) == 0)
+            exit_error("traceroute: invalid value: (`%s' near `%s')\n", param, param);
+        first_ttl = ft_atoi(param);
+        if (first_ttl <= 0)
+            exit_error("traceroute: option value too small: %d\n", first_ttl);
+        else if (first_ttl >= dt->max_ttl)
+            exit_error("traceroute: option first ttl value higher than max ttl: %d\n", first_ttl);
+        else
+            dt->first_ttl = first_ttl;
+    }
+    else
+        dt->first_ttl = FIRST_TTL;
+}
+
 void    init_options_params(t_data *dt)
 {
     option_q(dt);
@@ -129,6 +153,6 @@ void    init_options_params(t_data *dt)
     option_w(dt);
     option_z(dt);
     option_p(dt);
+    option_f(dt);
     // option_s(dt);
-    // option_f(dt);
 }

@@ -23,6 +23,7 @@ typedef struct  s_data
     int                 nb_probes;
     int                 reply_timeout;
     int                 probes_interval_us;
+    int                 first_ttl;
     // each hop
     int                 curr_ttl;
     int                 curr_probe;
