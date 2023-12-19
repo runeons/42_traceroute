@@ -24,41 +24,56 @@ static void resolve_hop_name(t_data *dt, struct sockaddr_in hop_addr)
     }
 }
 
-static char    *hop_information(t_data *dt, char *buf, struct sockaddr_in hop_addr)
+t_probe *get_probe(t_lst *hop_probes, int nb)
+{
+    while (hop_probes != NULL)
+    {
+        t_probe *tmp = (t_probe *)hop_probes->content;
+        if (tmp->nb == nb)
+            return (tmp);
+        hop_probes = hop_probes->next;
+    }
+    return (NULL);
+}
+
+static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
 {
     ft_bzero(buf, 512);
     if (is_activated_option(dt->act_options, 'n'))
-        sprintf(buf, "%s", inet_ntoa(hop_addr.sin_addr));
+        sprintf(buf, "%s", inet_ntoa(curr_probe->address.sin_addr));
     else
     {
-        resolve_hop_name(dt, hop_addr);
-        sprintf(buf, "%s (%s)", dt->hop_name, inet_ntoa(hop_addr.sin_addr));
+        resolve_hop_name(dt, curr_probe->address);
+        sprintf(buf, "%s (%s)", dt->hop_name, inet_ntoa(curr_probe->address.sin_addr));
     }
     return (buf);
 }
 
-static int     curr_prob_time(t_data *dt)
+int     is_new_address(t_data *dt, t_probe *curr_probe)
 {
-    t_lst *last = NULL;
-
-    last = ft_lst_get_last_node(&dt->hop_times);
-    if (last && last->content)
-        return (*(int *)last->content);
-    else
+    if (curr_probe->nb == 1)
+        return (1);
+    t_probe *prev_probe = get_probe(dt->hop_probes, curr_probe->nb - 1);
+    char prev[MAX_IP_LEN];
+    char curr[MAX_IP_LEN];
+    ft_strcpy(prev, inet_ntoa(curr_probe->address.sin_addr));
+    ft_strcpy(curr, inet_ntoa(prev_probe->address.sin_addr));
+    if (ft_strcmp(prev, curr) == 0)
         return (0);
+    return (1);
 }
 
 void    display_hop(t_data *dt, struct sockaddr_in hop_addr)
 {
     char    buf[512];
-    int     curr_probe_time = 0;
 
-    curr_probe_time = curr_prob_time(dt);
+    (void)hop_addr;
+    t_probe *curr_probe = (t_probe *)ft_lst_get_last_node(&dt->hop_probes)->content; // TO DO PROTECT BY DESIGN
     if (dt->curr_probe == 1)
         printf("%-4d  ", dt->curr_ttl);
-    if (ft_lst_size(dt->hop_times) == 1)
-        printf("%s  ", hop_information(dt, buf, hop_addr));
-    printf("%.3f ms  ", (float)curr_probe_time / 1000);
+    if (is_new_address(dt, curr_probe))
+        printf("%s  ", hop_information(dt, buf, curr_probe));
+    printf("%.3f ms  ", (float)curr_probe->time / 1000);
     if (dt->nb_probes > 1)
         fflush(stdout);
     if (dt->curr_probe == dt->nb_probes)
