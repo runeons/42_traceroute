@@ -48,6 +48,7 @@ SRCS_LIST					=	\
 							init_options.c \
 							main.c \
 							reach_hop.c \
+							receive_reply.c \
 							utils_debug.c \
 							utils_options.c \
 							utils_verbose.c \

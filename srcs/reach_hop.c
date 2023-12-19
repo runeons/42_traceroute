@@ -1,17 +1,9 @@
 #include "traceroute_functions.h"
 
-void    send_packet(t_data *dt, void *packet)
+void    reinit_hop(t_data *dt)
 {
-    int r = 0;
-
-    r = sendto(dt->socket, packet, sizeof(struct ip) + sizeof(struct udphdr), 0, (struct sockaddr *) &dt->target_address, sizeof(struct sockaddr_in));
-    if (r == -1)
-        exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
-    if (r == 0)
-        printf(C_B_RED"Not entirely sent"C_RES"\n");
-    if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
-        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-    verbose_full_send(packet);
+    ft_del((void **)&dt->hop_times);
+    dt->curr_probe = 1;
 }
 
 void    init_fd_set(t_data *dt)
@@ -20,77 +12,52 @@ void    init_fd_set(t_data *dt)
     FD_SET(dt->socket, &dt->read_set);
 }
 
-static void    save_time(t_data *dt)
-{
-    int *time;
-
-    if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
-        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-    if (!(time = mmalloc(sizeof(int))))
-        exit_error_close(dt->socket, "traceroute: malloc failure.");
-    *time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
-    ft_lst_add_node_back(&dt->hop_times, ft_lst_create_node(time));
-}
-
-void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in hop_addr)
-{
-    struct icmphdr *h = (struct icmphdr *)(recv_packet + H_IP_LEN);
-
-    save_time(dt);
-    if (h->type == ICMP_TIME_EXCEEDED)
-        display_hop(dt, hop_addr);
-    else if (h->type == ICMP_UNREACH)
-    {
-        display_hop(dt, hop_addr);
-        g_loop = 0;
-    }
-    else
-        if (g_loop)
-            printf(C_B_RED"UNHANDLED %-4d %s"C_RES"\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr)); // TO DO check 127
-}
-
 void    init_timeout(t_data *dt, struct timeval *timeout)
 {
     timeout->tv_sec  = dt->reply_timeout;
     timeout->tv_usec = 0;
 }
 
-void    receive_response(t_data *dt)
+void    monitor_reply(t_data *dt)
 {
     struct timeval      timeout;
-    struct sockaddr_in  hop_addr;
-    socklen_t           hop_addr_len = sizeof(hop_addr);
-    char                recv_packet[PACKET_SIZE];
     int                 fds = 0;
-    int                 r   = 0;
 
     init_fd_set(dt);
     init_timeout(dt, &timeout);
     fds = select(dt->socket + 1, &dt->read_set, NULL, NULL, &timeout);
     if (fds > 0)
-    {
-        r = recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *) &hop_addr, &hop_addr_len);
-        if (r == -1)
-            exit_error_clear(dt, "Error receiving recv_packet %s %s\n", strerror(errno));
-        verbose_full_reply(recv_packet);
-        handle_reply(dt, recv_packet, hop_addr);
-    }
+        receive_reply(dt);
     else
         display_hop_timeout(dt);
 }
 
+void    send_packet(t_data *dt, void *packet)
+{
+    int r = 0;
+
+    r = sendto(dt->socket, packet, sizeof(struct ip) + sizeof(struct udphdr), 0, (struct sockaddr *) &dt->target_address, sizeof(struct sockaddr_in));
+    if (r == -1)
+        exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
+    else if (r == 0)
+        warning_error("Not entirely sent\n");
+    if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
+        exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
+    verbose_full_send(packet);
+}
+
 void    reach_hop(t_data *dt)
 {
-    char            udp_packet[PACKET_SIZE];
+    char    udp_packet[PACKET_SIZE];
 
-    ft_del((void **)&dt->hop_times);
-    for (int i = 1; i <= dt->nb_probes; i++)
+    reinit_hop(dt);
+    while (dt->curr_probe <= dt->nb_probes)
     {
-        dt->curr_probe = i;
         craft_packet(dt, udp_packet);
         send_packet(dt, udp_packet);
-        receive_response(dt);
+        monitor_reply(dt);
         usleep(dt->probes_interval_us);
+        dt->curr_probe++;
     }
     dt->curr_ttl++;
 }

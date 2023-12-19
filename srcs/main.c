@@ -9,15 +9,10 @@ void    handle_sigint(int err)
     g_loop = 0;
 }
 
-void    close_sockets(t_data *dt)
+void    traceroute_end(t_data *dt)
 {
     if (dt->socket > 0)
         close(dt->socket);
-}
-
-void    traceroute_end(t_data *dt)
-{
-    close_sockets(dt);
     free_all_malloc();
 }
 

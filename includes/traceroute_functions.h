@@ -31,6 +31,9 @@ void            traceroute(t_data *dt);
 //  reach_hop.c
 void            reach_hop(t_data *dt);
 
+//  receive_reply.c
+void            receive_reply(t_data *dt);
+
 //  socket.c
 void            resolve_hostname(t_data *dt);
 void            resolve_address(t_data *dt);
