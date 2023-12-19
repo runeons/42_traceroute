@@ -24,7 +24,7 @@ void resolve_address(t_data *dt) // check that dest exists and resolve address i
         tmp = tmp->ai_next;
         break; // useful if many
     }
-    // if (DEBUG == 1)
+    // if (DEBUG)
     //     printf(C_B_RED"dt->resolved_address %s"C_RES"\n", dt->resolved_address);
     freeaddrinfo(resolved_add);
 }
@@ -46,7 +46,7 @@ void resolve_hostname(t_data *dt) // useful only when input_dest is ip address (
         if (dt->resolved_hostname == NULL)
             exit_error("traceroute: malloc failure.\n");
     }
-    // if (DEBUG == 1)
+    // if (DEBUG)
     //     printf(C_B_RED"dt->resolved_hostname %s"C_RES"\n", dt->resolved_hostname);
 }
 
