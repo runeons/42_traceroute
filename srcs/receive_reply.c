@@ -2,19 +2,14 @@
 
 static void    save_time(t_data *dt)
 {
-    int     *time = NULL;
-    t_lst   *last = NULL;
+    t_probe *curr = NULL;
 
     if (gettimeofday(&dt->recv_tv, &dt->tz) != 0)
         exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-    if (!(time = mmalloc(sizeof(int))))
-        exit_error_close(dt->socket, "traceroute: malloc failure.");
-    *time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
-    last = ft_lst_get_last_node(&dt->hop_probes);
-    if (last && last->content)
-        ((t_probe *)last->content)->time = *time;
+    curr = get_probe(dt->hop_probes, dt->curr_probe);
+    if (curr)
+        curr->time = (dt->recv_tv.tv_sec - dt->send_tv.tv_sec) * 1000000 + dt->recv_tv.tv_usec - dt->send_tv.tv_usec;
 }
-
 
 static void     save_name(t_data *dt, char *host)
 {

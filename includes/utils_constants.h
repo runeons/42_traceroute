@@ -4,7 +4,7 @@
 
 # define DEBUG                  1
 # define VERBOSE                0
-
+# define PRINT_BUF_SIZE         512
 # define MAX_IP_LEN             16
 # define MAX_HOSTNAME_LEN       128
 # define MAX_PORT               65535

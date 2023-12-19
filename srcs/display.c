@@ -9,7 +9,7 @@ void    display_traceroute_init(t_data *dt)
 
 static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
 {
-    ft_bzero(buf, 512);
+    ft_bzero(buf, PRINT_BUF_SIZE);
     if (is_activated_option(dt->act_options, 'n'))
         sprintf(buf, "%s", inet_ntoa(curr_probe->address.sin_addr));
     else
@@ -17,13 +17,15 @@ static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
     return (buf);
 }
 
-int     is_new_address(t_data *dt, t_probe *curr_probe) // TO DO CLEAN
+static int     is_new_address(t_data *dt, t_probe *curr_probe) // TO DO CLEAN
 {
+    t_probe *prev_probe = NULL;
+    char    prev[MAX_IP_LEN];
+    char    curr[MAX_IP_LEN];
+    
     if (curr_probe->nb == 1)
         return (1);
-    t_probe *prev_probe = get_probe(dt->hop_probes, curr_probe->nb - 1);
-    char prev[MAX_IP_LEN];
-    char curr[MAX_IP_LEN];
+    prev_probe = get_probe(dt->hop_probes, curr_probe->nb - 1);
     ft_strcpy(prev, inet_ntoa(curr_probe->address.sin_addr));
     ft_strcpy(curr, inet_ntoa(prev_probe->address.sin_addr));
     if (ft_strcmp(prev, curr) == 0)
@@ -33,18 +35,22 @@ int     is_new_address(t_data *dt, t_probe *curr_probe) // TO DO CLEAN
 
 void    display_hop(t_data *dt)
 {
-    char    buf[512];
+    char    buf[PRINT_BUF_SIZE];
 
-    t_probe *curr_probe = (t_probe *)ft_lst_get_last_node(&dt->hop_probes)->content; // TO DO PROTECT BY DESIGN
-    if (dt->curr_probe == 1)
-        printf("%-4d  ", dt->curr_ttl);
-    if (is_new_address(dt, curr_probe))
-        printf("%s  ", hop_information(dt, buf, curr_probe));
-    printf("%.3f ms  ", (float)curr_probe->time / 1000);
-    if (dt->nb_probes > 1)
-        fflush(stdout);
-    if (dt->curr_probe == dt->nb_probes)
-        printf("\n");
+    t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
+    if (curr)
+    {
+        if (dt->curr_probe == 1)
+            printf("%-4d  ", dt->curr_ttl);
+        if (is_new_address(dt, curr))
+            printf("%s  ", hop_information(dt, buf, curr));
+        printf("%.3f ms  ", (float)curr->time / 1000);
+        if (dt->nb_probes > 1)
+            fflush(stdout);
+        if (dt->curr_probe == dt->nb_probes)
+            printf("\n");
+    }
+
 }
 
 void    display_hop_timeout(t_data *dt)
