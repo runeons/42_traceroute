@@ -3,8 +3,8 @@
 
 void    craft_ip_header(t_data *dt, struct ip *ip_h)
 {
-    ip_h->ip_hl         = 5;
-    ip_h->ip_v          = 4;
+    ip_h->ip_hl         = IP_HL;
+    ip_h->ip_v          = IP_VERSION;
     ip_h->ip_ttl        = dt->curr_ttl;
     ip_h->ip_p          = IPPROTO_UDP;
     ip_h->ip_src.s_addr = INADDR_ANY;
