@@ -1,24 +1,24 @@
 #include "traceroute_functions.h"
 
-void    reinit_hop(t_data *dt)
+static void    reinit_hop(t_data *dt)
 {
     ft_del((void **)&dt->hop_probes);
     dt->curr_probe = 1;
 }
 
-void    init_fd_set(t_data *dt)
+static void    init_fd_set(t_data *dt)
 {
     FD_ZERO(&dt->read_set);
     FD_SET(dt->socket, &dt->read_set);
 }
 
-void    init_timeout(t_data *dt, struct timeval *timeout)
+static void    init_timeout(t_data *dt, struct timeval *timeout)
 {
     timeout->tv_sec  = dt->reply_timeout;
     timeout->tv_usec = 0;
 }
 
-void    monitor_reply(t_data *dt)
+static void    monitor_reply(t_data *dt)
 {
     struct timeval      timeout;
     int                 fds = 0;
@@ -32,7 +32,7 @@ void    monitor_reply(t_data *dt)
         display_hop_timeout(dt);
 }
 
-void    send_packet(t_data *dt, void *packet)
+static void    send_packet(t_data *dt, void *packet)
 {
     int r = 0;
 

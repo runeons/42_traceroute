@@ -3,13 +3,13 @@
 
 int g_loop = 1;
 
-void    handle_sigint(int err)
+static void    handle_sigint(int err)
 {
     (void)err;
     g_loop = 0;
 }
 
-void    traceroute_end(t_data *dt)
+static void    traceroute_end(t_data *dt)
 {
     if (dt->socket > 0)
         close(dt->socket);
@@ -26,14 +26,14 @@ void    exit_error_clear(t_data *dt, const char *msg, ...)
     exit(1);
 }
 
-void    option_h()
+static void    option_h()
 {
     display_help();
     free_all_malloc();
     exit(0);
 }
 
-void    parse_input(t_parsed_cmd *parsed_cmd, int ac, char **av)
+static void    parse_input(t_parsed_cmd *parsed_cmd, int ac, char **av)
 {
     if (ac < 2)
         option_h();
@@ -41,13 +41,13 @@ void    parse_input(t_parsed_cmd *parsed_cmd, int ac, char **av)
     // debug_activated_options(parsed_cmd->act_options);
 }
 
-void    add_destination(t_data *dt, char *curr_arg)
+static void    add_destination(t_data *dt, char *curr_arg)
 {
     if (dt)
         dt->input_dest = curr_arg;
 }
 
-void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
+static void    initialise_data(t_data *dt, t_parsed_cmd *parsed_cmd)
 {
     init_data(dt, parsed_cmd);
     init_options_params(dt);

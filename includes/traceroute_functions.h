@@ -25,9 +25,6 @@ void            exit_error_clear(t_data *dt, const char *msg, ...);
 //  craft.c
 void            craft_packet(t_data *dt, char *udp_packet);
 
-//  traceroute.c
-void            traceroute(t_data *dt);
-
 //  reach_hop.c
 void            reach_hop(t_data *dt);
 
@@ -57,9 +54,9 @@ void            verbose_full_reply(void *packet);
 void            verbose_full_send(void *packet);
 
 //  utils_debug.c
+t_probe         *get_probe(t_lst *hop_probes, int nb);
 void            debug_addrinfo(struct addrinfo *ai);
 void            debug_sockaddr_in(struct sockaddr_in *addr);
-t_probe         *get_probe(t_lst *hop_probes, int nb);
 void            debug_one_probe(void *content);
 void            debug_probes(t_data *dt);
 #endif

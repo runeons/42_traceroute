@@ -2,7 +2,7 @@
 #ifndef UTILS_CONSTANTS_H
 # define UTILS_CONSTANTS_H
 
-# define DEBUG                  1
+# define DEBUG                  0
 # define VERBOSE                0
 # define PRINT_BUF_SIZE         512
 # define MAX_IP_LEN             16
