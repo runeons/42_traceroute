@@ -17,7 +17,7 @@ static char    *hop_information(t_data *dt, char *buf, t_probe *curr_probe)
     return (buf);
 }
 
-static int     is_new_address(t_data *dt, t_probe *curr_probe) // TO DO CLEAN
+static int     is_new_address(t_data *dt, t_probe *curr_probe)
 {
     t_probe *prev_probe = NULL;
     char    prev[MAX_IP_LEN];

@@ -17,7 +17,7 @@ int     get_send_port(void *packet)
     int port = 0;
 
     port = *(int *)(packet + IP_H_LEN + 2);
-    return (ntohs(port)); // TO DO make my own ?
+    return (ntohs(port));
 }
 
 int     get_curr_send_port(t_data *dt)

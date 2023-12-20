@@ -45,8 +45,6 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
         display_hop(dt);
     if (h->type == ICMP_UNREACH)
         g_loop = 0;
-    if (g_loop && h->type != ICMP_TIME_EXCEEDED && h->type != ICMP_UNREACH)
-            printf(C_B_RED"UNHANDLED %-4d %s"C_RES"\n", dt->curr_ttl, inet_ntoa(hop_addr.sin_addr)); // TO DOOO WHEN do I go there multi stress test
 }
 
 int     is_same_port(t_data *dt, char *recv_packet)
@@ -68,21 +66,27 @@ void    receive_reply(t_data *dt)
 
     while (1) // not g_loop because we do want to finish the ttl probes even when target is reached
     {
-        struct sockaddr_in  *addr = &((t_probe *)(ft_lst_get_last_node(&dt->hop_probes)->content))->address; // TO DO PROTECT
-        if (recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len) == -1)
-            exit_error_clear(dt, "Error receiving packet.\n");
-        verbose_full_reply(dt, recv_packet);
-        if (is_same_port(dt, recv_packet))
+        t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
+        if (curr)
         {
-            handle_reply(dt, recv_packet, *addr);
-            break;
+            struct sockaddr_in  *addr = &curr->address;
+            if (recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len) == -1)
+                exit_error_clear(dt, "Error receiving packet.\n");
+            verbose_full_reply(dt, recv_packet);
+            if (is_same_port(dt, recv_packet))
+            {
+                handle_reply(dt, recv_packet, *addr);
+                break;
+            }
+            else
+            {
+                if (g_loop)
+                    continue; // don't handle this reply if not the same id - wait for another reply
+                else
+                    break; // quit if ctrl-c
+            }
         }
         else
-        {
-            if (g_loop)
-                continue; // don't handle this reply if not the same id - wait for another reply
-            else
-                break; // quit if ctrl-c
-        }
+            break; // ADDED
     }
 }

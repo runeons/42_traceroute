@@ -48,19 +48,13 @@ void    bind_socket_to_src_port(t_data *dt, int src_port)
 
 void    open_main_socket(t_data *dt)
 {
-    int             one = 1;
-    // struct timeval  timeout;
+    int optval = 1;
 
-	// timeout.tv_sec  = 1;
-	// timeout.tv_usec = 0;
-
-    dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP); // TO DO
+    dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (dt->socket < 0)
         exit_error("traceroute: socket error: Check that you have the correct rights.\n");
-    if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0) // TO DO
+    if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(optval)) < 0)
         exit_error_clear(dt, "traceroute: socket error in setting option: Exiting program.%s\n");
-    // if (setsockopt(dt->socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) != 0)
-        // exit_error_clear(dt, "traceroute: socket error in setting timeout option: Exiting program.\n");
     FD_SET(dt->socket, &dt->read_set);
     bind_socket_to_src_port(dt, dt->src_port);
 }
