@@ -36,7 +36,7 @@ static void    send_packet(t_data *dt, void *packet)
 {
     int r = 0;
 
-    r = sendto(dt->socket, packet, sizeof(struct ip) + sizeof(struct udphdr), 0, (struct sockaddr *) &dt->target_address, sizeof(struct sockaddr_in));
+    r = sendto(dt->socket, packet, IP_H_LEN + UDP_H_LEN + UDP_D_LEN, 0, (struct sockaddr *) &dt->target_address, sizeof(struct sockaddr_in));
     if (r == -1)
         exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
     else if (r == 0)
@@ -45,7 +45,7 @@ static void    send_packet(t_data *dt, void *packet)
     {
         if (gettimeofday(&dt->send_tv, &dt->tz) != 0)
             exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
-        verbose_full_send(packet);
+        verbose_full_send(dt, packet);
         t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
         if (curr)
             curr->send_port = get_send_port(packet);
@@ -54,9 +54,9 @@ static void    send_packet(t_data *dt, void *packet)
 
 void    reach_hop(t_data *dt)
 {
-    char    udp_packet[PACKET_SIZE];
+    char    udp_packet[SEND_PACKET_SIZE];
 
-    ft_memset(udp_packet, 0, PACKET_SIZE);
+    ft_memset(udp_packet, 0, SEND_PACKET_SIZE);
     reinit_hop(dt);
     while (dt->curr_probe <= dt->nb_probes)
     {

@@ -1,10 +1,10 @@
 #include "traceroute_functions.h"
 
-void    verbose_h_dump(char *title, void *h, int len)
+void    verbose_h_dump(t_data *dt, char *title, void *h, int len)
 {
     unsigned char *bytes = (unsigned char *)h;
 
-    if (VERBOSE && g_loop)
+    if (dt->verbose && g_loop)
     {
         printf("%-10s", title);
         for (int i = 0; i < len; i = i + 2)
@@ -13,20 +13,22 @@ void    verbose_h_dump(char *title, void *h, int len)
     }
 }
 
-void    verbose_full_reply(void *packet)
+void    verbose_full_reply(t_data *dt, void *packet)
 {
-    if (VERBOSE && g_loop)
+    if (dt->verbose && g_loop)
         printf("\n- - - - -\n");
-    verbose_h_dump("   IPH",   packet,                                     sizeof(struct iphdr));
-    verbose_h_dump("   ICMPH", packet + H_IP_LEN,                          sizeof(struct icmphdr));
-    verbose_h_dump("   IPH",   packet + H_IP_LEN + H_ICMP_LEN,             sizeof(struct iphdr));
-    verbose_h_dump("   UDPH",  packet + H_IP_LEN + H_ICMP_LEN + H_IP_LEN,  sizeof(struct udphdr));
+    verbose_h_dump(dt, "   IPH",   packet,                                                  IP_H_LEN);
+    verbose_h_dump(dt, "   ICMPH", packet + IP_H_LEN,                                       ICMP_H_LEN);
+    verbose_h_dump(dt, "   IPH",   packet + IP_H_LEN + ICMP_H_LEN,                          IP_H_LEN);
+    verbose_h_dump(dt, "   UDPH",  packet + IP_H_LEN + ICMP_H_LEN + IP_H_LEN,               UDP_H_LEN);
+    verbose_h_dump(dt, "   UDPD",  packet + IP_H_LEN + ICMP_H_LEN + IP_H_LEN + UDP_H_LEN,   UDP_D_LEN);
 }
 
-void    verbose_full_send(void *packet)
+void    verbose_full_send(t_data *dt, void *packet)
 {
-    if (VERBOSE && g_loop)
+    if (dt->verbose && g_loop)
         printf("\n- - - - -\n");
-    verbose_h_dump("   IP",    packet,             sizeof(struct iphdr));
-    verbose_h_dump("   UDPH",  packet + H_IP_LEN,  sizeof(struct udphdr));
+    verbose_h_dump(dt, "   IP",    packet,                          IP_H_LEN);
+    verbose_h_dump(dt, "   UDPH",  packet + IP_H_LEN,               UDP_H_LEN);
+    verbose_h_dump(dt, "   UDPD",  packet + IP_H_LEN + UDP_H_LEN,   UDP_D_LEN);
 }

@@ -146,6 +146,14 @@ void   option_f(t_data *dt)
         dt->curr_ttl = FIRST_TTL;
 }
 
+void   option_v(t_data *dt)
+{
+    if (is_activated_option(dt->act_options, 'v'))
+        dt->verbose = 1;
+    else
+        dt->verbose = 0;
+}
+
 void    init_options_params(t_data *dt)
 {
     option_q(dt);
@@ -154,5 +162,6 @@ void    init_options_params(t_data *dt)
     option_z(dt);
     option_p(dt);
     option_f(dt);
+    option_v(dt);
     // option_s(dt);
 }

@@ -56,8 +56,8 @@ int             get_reply_port(void *packet);
 int             get_curr_send_port(t_data *dt);
 
 // utils_verbose.c
-void            verbose_full_reply(void *packet);
-void            verbose_full_send(void *packet);
+void            verbose_full_reply(t_data *dt, void *packet);
+void            verbose_full_send(t_data *dt, void *packet);
 
 //  utils_debug.c
 void            debug_addrinfo(struct addrinfo *ai);

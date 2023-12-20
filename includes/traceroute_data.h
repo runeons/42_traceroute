@@ -32,10 +32,11 @@ typedef struct  s_data
     int                 nb_probes;
     int                 reply_timeout;
     int                 probes_interval_us;
+    int                 verbose;
     // each hop
     int                 curr_ttl;
     int                 curr_probe;
-    t_lst               *hop_probes; // liste de probes
+    t_lst               *hop_probes;
     // time
     struct timeval      tz;
     struct timeval      init_tv;

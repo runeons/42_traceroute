@@ -2,7 +2,7 @@
 
 void    display_traceroute_init(t_data *dt)
 {
-    printf("traceroute to %s (%s), %d hops max, %d byte packets\n", dt->input_dest, dt->resolved_address, dt->max_ttl, PACKET_SIZE);
+    printf("traceroute to %s (%s), %d hops max, %d byte packets\n", dt->input_dest, dt->resolved_address, dt->max_ttl, SEND_PACKET_SIZE);
     if (gettimeofday(&dt->init_tv, &dt->tz) != 0)
         exit_error_close(dt->socket, "traceroute: cannot retrieve time\n");
 }
@@ -50,7 +50,6 @@ void    display_hop(t_data *dt)
         if (dt->curr_probe == dt->nb_probes)
             printf("\n");
     }
-
 }
 
 void    display_hop_timeout(t_data *dt)

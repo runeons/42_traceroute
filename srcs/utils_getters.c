@@ -16,7 +16,7 @@ int     get_send_port(void *packet)
 {
     int port = 0;
 
-    port = *(int *)(packet + H_IP_LEN + 2);
+    port = *(int *)(packet + IP_H_LEN + 2);
     return (ntohs(port)); // TO DO make my own ?
 }
 
@@ -34,6 +34,6 @@ int     get_reply_port(void *packet)
 {
     int port = 0;
 
-    port = *(int *)(packet + H_IP_LEN + H_ICMP_LEN + H_IP_LEN + 2);
+    port = *(int *)(packet + IP_H_LEN + ICMP_H_LEN + IP_H_LEN + 2);
     return (ntohs(port));
 }
