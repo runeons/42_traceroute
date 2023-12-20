@@ -11,12 +11,7 @@ void resolve_address(t_data *dt) // check that dest exists and resolve address i
     tmp = resolved_add;
     while (tmp != NULL)
     {
-        char ip_str[MAX_IP_LEN];
-
-        ft_bzero(ip_str, MAX_IP_LEN);
-        if (inet_ntop(tmp->ai_family, &((struct sockaddr_in *)tmp->ai_addr)->sin_addr, ip_str, sizeof(ip_str)) == NULL)
-            exit_error("traceroute: address error: Conversion from network to presentation format failed.\n");
-        dt->resolved_address = ft_strdup(ip_str);
+        dt->resolved_address = ft_strdup(inet_ntoa(((struct sockaddr_in *)resolved_add->ai_addr)->sin_addr)); // ADDED
         if (dt->resolved_address == NULL)
             exit_error("traceroute: malloc failure.\n");
         tmp = tmp->ai_next;
@@ -53,13 +48,19 @@ void    bind_socket_to_src_port(t_data *dt, int src_port)
 
 void    open_main_socket(t_data *dt)
 {
-    int         one = 1;
+    int             one = 1;
+    // struct timeval  timeout;
 
-    dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP); // change to 0 ?
+	// timeout.tv_sec  = 1;
+	// timeout.tv_usec = 0;
+
+    dt->socket = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP); // TO DO
     if (dt->socket < 0)
         exit_error("traceroute: socket error: Check that you have the correct rights.\n");
     if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0) // TO DO
-        exit_error_clear(dt, "Error setting socket options.\n");
+        exit_error_clear(dt, "traceroute: socket error in setting option: Exiting program.%s\n");
+    // if (setsockopt(dt->socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(timeout)) != 0)
+        // exit_error_clear(dt, "traceroute: socket error in setting timeout option: Exiting program.\n");
     FD_SET(dt->socket, &dt->read_set);
     bind_socket_to_src_port(dt, dt->src_port);
 }
