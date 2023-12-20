@@ -1,12 +1,15 @@
 #include "traceroute_functions.h"
 #include "utils_options.h"
 
-int g_loop = 1;
+int g_end       = 0;
+int g_sigint    = 0;
 
 static void    handle_sigint(int err)
 {
     (void)err;
-    g_loop = 0;
+    g_end       = 1;
+    g_sigint    = 1;
+    printf("\n");
 }
 
 static void    traceroute_end(t_data *dt)
@@ -72,7 +75,7 @@ int main(int ac, char **av)
     // debug_sockaddr_in(&dt.target_address);
     signal(SIGINT, handle_sigint);
     display_traceroute_init(&dt);
-    while (g_loop && dt.curr_ttl <= dt.max_ttl)
+    while (!g_end && dt.curr_ttl <= dt.max_ttl)
         reach_hop(&dt);  
     traceroute_end(&dt);
     return (0);

@@ -58,7 +58,7 @@ void    reach_hop(t_data *dt)
 
     ft_memset(udp_packet, 0, SEND_PACKET_SIZE);
     reinit_hop(dt);
-    while (dt->curr_probe <= dt->nb_probes)
+    while (!g_sigint && dt->curr_probe <= dt->nb_probes)
     {
         init_probe(dt);
         craft_packet(dt, udp_packet);

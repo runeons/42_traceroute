@@ -44,7 +44,7 @@ static void    handle_reply(t_data *dt, char recv_packet[], struct sockaddr_in h
     if (h->type == ICMP_TIME_EXCEEDED || h->type == ICMP_UNREACH)
         display_hop(dt);
     if (h->type == ICMP_UNREACH)
-        g_loop = 0;
+        g_end = 1;
 }
 
 int     is_same_port(t_data *dt, char *recv_packet)
@@ -64,7 +64,7 @@ void    receive_reply(t_data *dt)
     char                recv_packet[RECV_PACKET_SIZE];
     socklen_t           hop_addr_len = sizeof(struct sockaddr_in);
 
-    while (1) // not g_loop because we do want to finish the ttl probes even when target is reached
+    while (!g_sigint) // not !g_end because we want to finish the ttl probes even when target is reached
     {
         t_probe *curr = get_probe(dt->hop_probes, dt->curr_probe);
         if (curr)
@@ -79,14 +79,7 @@ void    receive_reply(t_data *dt)
                 break;
             }
             else
-            {
-                if (g_loop)
-                    continue; // don't handle this reply if not the same id - wait for another reply
-                else
-                    break; // quit if ctrl-c
-            }
+                continue; // don't handle this reply if not the same id - wait for another reply
         }
-        else
-            break; // ADDED
     }
 }

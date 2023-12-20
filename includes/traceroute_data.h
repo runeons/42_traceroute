@@ -3,7 +3,8 @@
 
 # include "utils_constants.h"
 
-extern int g_loop;
+extern int g_end;
+extern int g_sigint;
 
 typedef struct  s_probe
 {
