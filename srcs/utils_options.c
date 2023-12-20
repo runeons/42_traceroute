@@ -5,7 +5,7 @@ t_option allowed_options[] =
     {'h', "help",           0, "",          NULL, "give this help list"},
     {'q', "nqueries",       1, "N",         NULL, "send N probes per hop"},                                 // default 3
     {'m', "max-hops",       1, "N",         NULL, "specify N as max time-to-live / max hop to reach"},      // default 30
-    {'w', "wait",           1, "MAX",       NULL, "wait MAX seconds between sending each packet"},          // default 5
+    {'w', "wait",           1, "MAX",       NULL, "wait MAX seconds for a response to a probe"},            // default 5
     {'z', "sendwait",       1, "N",         NULL, "wait at least N seconds between sending each probe"},    // default 0
     {'p', "port",           1, "PORT",      NULL, "specify PORT as the starting destination port"},         // default 33434
     {'f', "first-ttl",      1, "N",         NULL, "specify N as first time-to-live / first hop to start"},  // default 1
