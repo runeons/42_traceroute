@@ -44,7 +44,7 @@ void    bind_socket_to_src_port(t_data *dt, int src_port)
     dt->local_address.sin_addr.s_addr   = INADDR_ANY;
     dt->local_address.sin_port          = htons(src_port);
     if (bind(dt->socket, (struct sockaddr *)&dt->local_address, sizeof(dt->local_address)) == -1)
-        exit_error_clear(dt, "Error binding socke.\n");
+        exit_error_close(dt->socket, "Error binding socket.\n");
 }
 
 void    open_main_socket(t_data *dt)
@@ -55,7 +55,7 @@ void    open_main_socket(t_data *dt)
     if (dt->socket < 0)
         exit_error("traceroute: socket error: Check that you have the correct rights.\n");
     if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &optval, sizeof(optval)) < 0)
-        exit_error_clear(dt, "traceroute: socket error in setting option: Exiting program.%s\n");
+        exit_error_close(dt->socket, "traceroute: socket error in setting option: Exiting program.%s\n");
     FD_SET(dt->socket, &dt->read_set);
     bind_socket_to_src_port(dt, dt->src_port);
 }

@@ -35,7 +35,7 @@ void    init_probe(t_data *dt)
 
     probe = mmalloc(sizeof(t_probe));
     if (probe == NULL)
-        exit_error_clear(dt, "traceroute: malloc failure.\n");
+        exit_error_close(dt->socket, "traceroute: malloc failure.\n");
     probe->nb = dt->curr_probe;
     probe->time = 0;
     probe->send_port = 0;

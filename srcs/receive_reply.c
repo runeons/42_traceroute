@@ -71,7 +71,7 @@ void    receive_reply(t_data *dt)
         {
             struct sockaddr_in  *addr = &curr->address;
             if (recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len) == -1)
-                exit_error_clear(dt, "Error receiving packet.\n");
+                exit_error_close(dt->socket, "Error receiving packet.\n");
             verbose_full_reply(dt, recv_packet);
             if (is_same_port(dt, recv_packet))
             {

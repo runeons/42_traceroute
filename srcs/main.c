@@ -19,16 +19,6 @@ static void    traceroute_end(t_data *dt)
     free_all_malloc();
 }
 
-void    exit_error_clear(t_data *dt, const char *msg, ...)
-{
-    va_list args;
-    va_start(args, msg);
-    vfprintf(stderr, msg, args);
-    va_end(args);
-    traceroute_end(dt);
-    exit(1);
-}
-
 static void    option_h()
 {
     display_help();

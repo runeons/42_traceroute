@@ -18,9 +18,6 @@
 # include <utils_options.h>
 # include <traceroute_data.h>
 
-// main.c
-void            exit_error_clear(t_data *dt, const char *msg, ...);
-
 //  craft.c
 void            craft_packet(t_data *dt, char *udp_packet);
 
