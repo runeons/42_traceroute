@@ -163,5 +163,4 @@ void    init_options_params(t_data *dt)
     option_p(dt);
     option_f(dt);
     option_v(dt);
-    // option_s(dt);
 }

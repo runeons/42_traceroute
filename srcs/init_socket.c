@@ -11,7 +11,7 @@ void resolve_address(t_data *dt) // check that dest exists and resolve address i
     tmp = resolved_add;
     while (tmp != NULL)
     {
-        if ((struct sockaddr_in *)tmp->ai_addr) // ADDED
+        if ((struct sockaddr_in *)tmp->ai_addr)
             dt->resolved_address = ft_strdup(inet_ntoa(((struct sockaddr_in *)tmp->ai_addr)->sin_addr));
         if (dt->resolved_address == NULL)
             exit_error("traceroute: malloc failure.\n");
