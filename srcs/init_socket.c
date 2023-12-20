@@ -48,7 +48,7 @@ void    bind_socket_to_src_port(t_data *dt, int src_port)
     dt->local_address.sin_addr.s_addr   = INADDR_ANY;
     dt->local_address.sin_port          = htons(src_port);
     if (bind(dt->socket, (struct sockaddr *)&dt->local_address, sizeof(dt->local_address)) == -1)
-        exit_error_clear(dt, "Error binding socket %s\n", strerror(errno));
+        exit_error_clear(dt, "Error binding socke.\n");
 }
 
 void    open_main_socket(t_data *dt)
@@ -59,27 +59,7 @@ void    open_main_socket(t_data *dt)
     if (dt->socket < 0)
         exit_error("traceroute: socket error: Check that you have the correct rights.\n");
     if (setsockopt(dt->socket, IPPROTO_IP, IP_HDRINCL, &one, sizeof(one)) < 0) // TO DO
-        exit_error_clear(dt, "Error setting socket options %s\n", strerror(errno));
+        exit_error_clear(dt, "Error setting socket options.\n");
     FD_SET(dt->socket, &dt->read_set);
     bind_socket_to_src_port(dt, dt->src_port);
 }
-
-// void set_socket_option_ttl(int socket, t_data *dt)
-// {
-//     int r           = 0;
-
-//     r = setsockopt(socket, IPPROTO_IP, IP_TTL, &dt->curr_ttl, sizeof(dt->curr_ttl));
-//     if (r != 0)
-//         exit_error_clear(dt, "traceroute: socket error in setting TTL option: Exiting program.\n");
-// }
-
-// void set_socket_option_timeout(int socket, t_data *dt)
-// {
-//     int r           = 0;
-//     struct timeval tv_out;
-// 	tv_out.tv_sec = dt->reply_timeout;
-// 	tv_out.tv_usec = 0;
-//     r = setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &tv_out, sizeof(tv_out)); // setting timeout option
-//     if (r != 0)
-//         exit_error_clear(dt, "traceroute: socket error in setting timeout option: Exiting program.\n");
-// }

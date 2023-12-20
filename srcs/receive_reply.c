@@ -70,7 +70,7 @@ void    receive_reply(t_data *dt)
     {
         struct sockaddr_in  *addr = &((t_probe *)(ft_lst_get_last_node(&dt->hop_probes)->content))->address; // TO DO PROTECT
         if (recvfrom(dt->socket, recv_packet, sizeof(recv_packet), 0, (struct sockaddr *)addr, &hop_addr_len) == -1)
-            exit_error_clear(dt, "Error receiving recv_packet %s %s\n", strerror(errno));
+            exit_error_clear(dt, "Error receiving packet.\n");
         verbose_full_reply(dt, recv_packet);
         if (is_same_port(dt, recv_packet))
         {

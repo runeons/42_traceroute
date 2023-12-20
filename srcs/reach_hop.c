@@ -38,7 +38,7 @@ static void    send_packet(t_data *dt, void *packet)
 
     r = sendto(dt->socket, packet, IP_H_LEN + UDP_H_LEN + UDP_D_LEN, 0, (struct sockaddr *) &dt->target_address, sizeof(struct sockaddr_in));
     if (r == -1)
-        exit_error_clear(dt, "Error sending packet %s\n", strerror(errno));
+        exit_error_clear(dt, "Error sending packet.\n");
     else if (r == 0)
         warning_error("Not entirely sent\n");
     else

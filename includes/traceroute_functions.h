@@ -17,7 +17,6 @@
 # include <utils_constants.h>
 # include <utils_options.h>
 # include <traceroute_data.h>
-# include <errno.h>
 
 // main.c
 void            exit_error_clear(t_data *dt, const char *msg, ...);
