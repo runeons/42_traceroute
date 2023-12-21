@@ -1,7 +1,7 @@
 # 42_ft_traceroute
     
 #### Overview
-This is a 42 project about recoding the traceroute command.
+Following ft_ping, this is a 42 project about recoding the traceroute command.
 
 #### Options
     -h, --help
