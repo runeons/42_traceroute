@@ -4,15 +4,15 @@
 Following ft_ping, this is a 42 project about recoding the traceroute command.
 
 #### Options
-    -h, --help
-    -q, --nqueries
-    -m, --max-hops
-    -w, --wait
-    -z, --sendwait
-    -p, --port
-    -f, --first-ttl
-    -n, --no-dns
-    -v, --verbose
+-    -h, --help
+-    -q, --nqueries
+-    -m, --max-hops
+-    -w, --wait
+-    -z, --sendwait
+-    -p, --port
+-    -f, --first-ttl
+-    -n, --no-dns
+-    -v, --verbose
 
 
 #### Information
