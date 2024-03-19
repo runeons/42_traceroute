@@ -25,4 +25,4 @@ Following ft_ping, this is a 42 project about recoding the traceroute command.
     
 #### Authors
 
-- [@tsantoni](https://www.github.com/voltaire-stn)
+- [@tsantoni](https://www.github.com/runeons)
